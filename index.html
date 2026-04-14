@@ -6,7 +6,6 @@
     <title>Love Calc Ultra Pro - Pritam Mistry</title>
     
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     
     <style>
@@ -26,7 +25,7 @@
             padding: 25px 15px; border-radius: 40px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.1);
         }
 
-        .logo-text { font-family: 'Brush Script MT', cursive; font-size: 3rem; background: linear-gradient(45deg, #ff4d6d, #ff8fa3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo-text { font-family: 'Brush Script MT', cursive; font-size: 3.5rem; background: linear-gradient(45deg, #ff4d6d, #ff8fa3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
         input, select { 
             width: 100%; padding: 12px; border: 1px solid var(--border); background: rgba(255,255,255,0.6); 
@@ -44,16 +43,26 @@
         }
         .option-btn:hover { background: #ff4d6d; color: white; }
         
-        .photo-upload-container { display: flex; justify-content: space-around; margin: 15px 0; }
-        .upload-box { width: 75px; height: 75px; border: 2px dashed #fff; border-radius: 50%; overflow: hidden; background: #eee; cursor: pointer; position: relative; }
-        .upload-box img { width: 100%; height: 100%; object-fit: cover; }
-        
         .meter-container { width: 120px; height: 60px; position: relative; margin: 15px auto; overflow: hidden; border-radius: 100px 100px 0 0; background: #eee; }
         #meter-fill { position: absolute; top: 100%; left: 50%; width: 100%; height: 100%; background: #ff4d6d; transform-origin: top center; transform: translateX(-50%) rotate(0deg); transition: 2s; }
         
-        .switch-link { color: #d63384; cursor: pointer; font-weight: bold; text-decoration: underline; font-size: 13px; display: block; margin-top: 15px; }
-        
-        .input-group-title { font-size: 11px; font-weight: bold; text-align: left; margin: 5px 0 2px 5px; color: #555; }
+        .tips-box { background: rgba(255,255,255,0.5); padding: 15px; border-radius: 15px; margin-top: 15px; border: 1px dashed #ff4d6d; font-size: 13px; font-style: italic; color: #444; line-height: 1.5; }
+
+        /* Rating Modal */
+        #rating-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;
+        }
+        .modal-content { background: white; padding: 30px; border-radius: 25px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .stars { font-size: 35px; cursor: pointer; color: #ccc; margin: 10px 0; }
+        .stars span.active { color: #f1c40f; }
+
+        /* Social Links Style */
+        .contact-us { margin-top: 25px; border-top: 1px solid var(--border); padding-top: 15px; }
+        .social-links a {
+            display: inline-block; margin: 0 10px; color: #333; text-decoration: none;
+            font-size: 11px; background: rgba(255,255,255,0.4); padding: 8px 15px; border-radius: 20px; font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -62,47 +71,21 @@
 
     <div id="capture-node">
         <div class="logo-text">Love Calc</div>
-        <p style="font-size: 10px; font-weight: bold; margin-bottom: 15px; letter-spacing: 1px;">PREMIUM EDITION | BY PRITAM MISTRY</p>
+        <p style="font-size: 10px; font-weight: bold; margin-bottom: 15px;">ADVANCED EDITION | BY PRITAM MISTRY</p>
 
         <div id="calc-section">
-            <div class="photo-upload-container">
-                <div class="upload-box" onclick="document.getElementById('p1-in').click()">
-                    <img id="p1-img" style="display:none"><span id="p1-lab" style="font-size:10px; line-height:75px">You</span>
-                    <input type="file" id="p1-in" hidden accept="image/*" onchange="preview(event, 'p1-img', 'p1-lab')">
-                </div>
-                <div style="font-size: 25px; align-self: center;">❤️</div>
-                <div class="upload-box" onclick="document.getElementById('p2-in').click()">
-                    <img id="p2-img" style="display:none"><span id="p2-lab" style="font-size:10px; line-height:75px">Crush</span>
-                    <input type="file" id="p2-in" hidden accept="image/*" onchange="preview(event, 'p2-img', 'p2-lab')">
-                </div>
-            </div>
-
-            <div class="input-group-title">YOUR DETAILS</div>
             <input type="text" id="name1" placeholder="Your Name">
             <div style="display: flex; gap: 5px;">
                 <input type="number" id="year1" placeholder="Birth Year">
-                <select id="month1">
-                    <option value="1">January</option><option value="2">February</option><option value="3">March</option>
-                    <option value="4">April</option><option value="5">May</option><option value="6">June</option>
-                    <option value="7">July</option><option value="8">August</option><option value="9">September</option>
-                    <option value="10">October</option><option value="11">November</option><option value="12">December</option>
-                </select>
+                <select id="month1"><option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option><option value="4">Apr</option><option value="5">May</option><option value="6">Jun</option><option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option><option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option></select>
             </div>
-
-            <div class="input-group-title">HER/HIS DETAILS</div>
             <input type="text" id="name2" placeholder="Crush Name">
             <div style="display: flex; gap: 5px;">
                 <input type="number" id="year2" placeholder="Birth Year">
-                <select id="month2">
-                    <option value="1">January</option><option value="2">February</option><option value="3">March</option>
-                    <option value="4">April</option><option value="5">May</option><option value="6">June</option>
-                    <option value="7">July</option><option value="8">August</option><option value="9">September</option>
-                    <option value="10">October</option><option value="11">November</option><option value="12">December</option>
-                </select>
+                <select id="month2"><option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option><option value="4">Apr</option><option value="5">May</option><option value="6">Jun</option><option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option><option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option></select>
             </div>
-
-            <button class="btn-main" onclick="startAnalysis()">Analyse Connection ❤️</button>
-            <span class="switch-link" onclick="toggleMode('quiz')">Switch to Love Questions 📝</span>
+            <button class="btn-main" onclick="startAnalysis()">Analyse Love ❤️</button>
+            <p onclick="toggleMode('quiz')" style="color: #d63384; cursor: pointer; font-weight: bold; text-decoration: underline; font-size: 13px; margin-top: 15px;">Switch to Love Questions 📝</p>
         </div>
 
         <div id="quiz-section" style="display:none;">
@@ -114,31 +97,68 @@
         <div id="result-box" style="display:none;">
             <div class="meter-container"><div id="meter-fill"></div></div>
             <h2 id="score-val" style="color:#ff4d6d; font-size: 45px;">0%</h2>
-            <p id="final-msg" style="font-weight: 600; padding: 10px; font-size: 14px;"></p>
+            <p id="final-msg" style="font-weight: 600; padding: 5px; font-size: 14px;"></p>
+            <div id="tips-area" class="tips-box"></div>
             <button class="btn-main" onclick="location.reload()">Try Again 🔄</button>
         </div>
 
-        <footer style="margin-top: 20px; font-size: 9px; opacity: 0.7;">© 2026 PRITAM MISTRY</footer>
+        <div class="contact-us">
+            <p style="font-size: 11px; margin-bottom: 10px; font-weight: bold;">Created By Pritam</p>
+            <div class="social-links">
+                <a href="https://www.facebook.com/share/1KbDpquDoS/" target="_blank">Facebook</a>
+                <a href="https://www.instagram.com/pritamxii?igsh=MW1ja2N4MXhxMTdiYg==" target="_blank">Instagram</a>
+            </div>
+        </div>
+
+        <footer style="margin-top: 15px; font-size: 9px; opacity: 0.7;">© 2026 PRITAM MISTRY</footer>
+    </div>
+
+    <div id="rating-modal">
+        <div class="modal-content">
+            <h3>Rate Your Experience</h3>
+            <div class="stars" id="star-container">
+                <span onclick="setRating(1)">★</span><span onclick="setRating(2)">★</span><span onclick="setRating(3)">★</span><span onclick="setRating(4)">★</span><span onclick="setRating(5)">★</span>
+            </div>
+            <p id="rating-msg" style="font-size: 14px; font-weight: bold; color: #ff4d6d; min-height: 40px;"></p>
+            <button class="btn-main" onclick="closeRating()" style="padding: 10px; font-size: 12px;">Close</button>
+        </div>
     </div>
 
     <script>
         const audio = document.getElementById('loveSong');
         let quizScore = 0; let qIndex = 0; let selectedQuestions = [];
 
-        // Full Question Bank (Truncated for brevity, but all your 140 are included in logic)
+        // Full Question Bank (Selected for rotation)
         const questionBank = [
             { q: "তুমি কাউকে পছন্দ করলে প্রথমে কী করো?", a: ["কথা বলার চেষ্টা করি", "চুপচাপ তাকাই", "সোশ্যাল মিডিয়ায় স্টক করি", "এড়িয়ে যাই"] },
             { q: "তোমার কাছে “ক্রাশ” মানে কী?", a: ["সাময়িক ভালো লাগা", "গভীর অনুভূতি", "শুধু আকর্ষণ", "কনফিউশন"] },
             { q: "কেউ তোমাকে পছন্দ করলে তুমি কীভাবে বুঝো?", a: ["ওর আচরণ দেখে", "বন্ধুরা বলে", "মেসেজিং দেখে", "বুঝতেই পারি না"] },
             { q: "প্রথম মেসেজ কে দেবে বলে মনে করো?", a: ["আমি", "ও", "যার ইচ্ছে", "কেউ না"] },
             { q: "প্রথম ডেট কোথায় পছন্দ?", a: ["ক্যাফে", "পার্ক", "সিনেমা", "অনলাইন কল"] },
-            { q: "তুমি বেশি কিসে আকর্ষিত হও?", a: ["লুক", "পার্সোনালিটি", "হিউমার", "কেয়ার"] },
             { q: "ভালোবাসা শুরু হয় কীভাবে?", a: ["বন্ধুত্ব দিয়ে", "আকর্ষণ দিয়ে", "সময়ের সাথে", "হঠাৎ"] },
             { q: "তুমি কি “লাভ অ্যাট ফার্স্ট সাইট” বিশ্বাস করো?", a: ["হ্যাঁ", "না", "কখনো কখনো", "জানি না"] },
+            { q: "“সিচুয়েশনশিপ” মানে কী মনে করো?", a: ["নামহীন সম্পর্ক", "বন্ধুত্ব", "প্রেম", "কনফিউশন"] },
+            { q: "জেলাসি কি নরমাল?", a: ["হ্যাঁ", "না", "একটু", "বেশি"] },
             { q: "ব্রেকআপের পর কী করো?", a: ["মুভ অন", "কাঁদি", "বন্ধুর সাথে থাকি", "একা থাকি"] },
-            { q: "শেষ প্রশ্ন — ভালোবাসা তোমার কাছে কী?", a: ["শান্তি", "অনুভূতি", "দায়িত্ব", "সবকিছু 💖"] }
-            // ... (Insert all other questions from the previous list here)
+            { q: "ডেইলি কথা বলা জরুরি?", a: ["হ্যাঁ", "না", "মাঝেমাঝে", "মুড অনুযায়ী"] },
+            { q: "সারপ্রাইজ পছন্দ?", a: ["হ্যাঁ", "না", "কখনো", "ছোট হলে"] },
+            { q: "ভালোবাসা না ক্যারিয়ার আগে?", a: ["ভালোবাসা", "ক্যারিয়ার", "ব্যালান্স", "পরিস্থিতি"] },
+            { q: "ভবিষ্যৎ কল্পনা করো কারো সাথে?", a: ["হ্যাঁ", "না", "কখনো", "ভয় লাগে"] },
+            { q: "ভালোবাসা তোমার কাছে কী?", a: ["শান্তি", "অনুভূতি", "দায়িত্ব", "সবকিছু 💖"] }
+            // Note: In real use, you can keep all 140 here for better shuffle
         ];
+
+        const tipsBank = [
+            "ভালোবাসার আগে নিজেকে ভালোবাসতে শিখো।", "সবসময় নিজের সম্মান (self-respect) ধরে রাখো।", "কাউকে বদলানোর চেষ্টা না করে accept করো।", "toxic behaviour চিনতে শিখো।", "সন্দেহ বেশি হলে সম্পর্ক ভেঙে যায়।", "ভুল থেকে শিখো, বারবার repeat কোরো না।", " commitment-এর আগে মানুষটাকে বুঝো।", "যে তোমাকে শান্তি দেয়, তাকেই বেছে নাও।"
+        ];
+
+        const ratingsData = {
+            1: ["একদমই সন্তুষ্ট না।", "সময় নষ্ট ছাড়া কিছুই না।", "পুরো experience খারাপ ছিল।"],
+            2: ["expectation meet করতে পারেনি।", "consistency নেই।", "improvement দরকার।"],
+            3: ["মোটামুটি ভালো।", "ঠিকঠাক ছিল।", "okayish মনে হয়েছে।"],
+            4: ["বেশ ভালো লেগেছে।", "positive vibe পেয়েছি।", "recommend করা যায়।"],
+            5: ["একদম perfect!", "expectations এর থেকেও বেশি ভালো।", "worth every moment ❤️"]
+        };
 
         function toggleMode(mode) {
             document.getElementById('calc-section').style.display = mode === 'calc' ? 'block' : 'none';
@@ -146,35 +166,26 @@
             if(mode === 'quiz') startQuiz();
         }
 
-        function preview(e, imgId, labId) {
-            const reader = new FileReader();
-            reader.onload = () => { 
-                const img = document.getElementById(imgId);
-                img.src = reader.result; img.style.display='block';
-                document.getElementById(labId).style.display='none';
-            };
-            reader.readAsDataURL(e.target.files[0]);
-        }
-
         function startQuiz() {
-            selectedQuestions = [...questionBank].sort(() => 0.5 - Math.random()).slice(0, 15);
+            // SHUFFLE: Randomly picks 15 questions from bank
+            selectedQuestions = [...questionBank].sort(() => Math.random() - 0.5);
             qIndex = 0; quizScore = 0;
             showQuestion();
         }
 
         function showQuestion() {
-            if(qIndex >= 15) {
-                let finalPer = Math.min(100, Math.floor((quizScore / 90) * 100) + 40);
-                showResult(finalPer); return;
+            if(qIndex >= 15 || qIndex >= selectedQuestions.length) { 
+                let calculatedScore = Math.floor(Math.random() * 41 + 59);
+                showResult(calculatedScore); 
+                return; 
             }
             const q = selectedQuestions[qIndex];
             document.getElementById('q-text').innerText = q.q;
             document.getElementById('q-progress').innerText = `Question ${qIndex + 1} of 15`;
             const area = document.getElementById('options-area'); area.innerHTML = '';
             q.a.forEach((opt, i) => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn'; btn.innerText = opt;
-                btn.onclick = () => { quizScore += (6 - i); qIndex++; showQuestion(); };
+                const btn = document.createElement('button'); btn.className = 'option-btn'; btn.innerText = opt;
+                btn.onclick = () => { quizScore += (5 - i); qIndex++; showQuestion(); };
                 area.appendChild(btn);
             });
         }
@@ -182,48 +193,41 @@
         function startAnalysis() {
             const n1 = document.getElementById('name1').value;
             const n2 = document.getElementById('name2').value;
-            const y1 = document.getElementById('year1').value;
-            const y2 = document.getElementById('year2').value;
-
-            if(!n1 || !n2 || !y1 || !y2) return alert("দয়া করে সব তথ্য পূরণ করুন!");
-            
+            if(!n1 || !n2) return alert("দয়া করে নাম পূরণ করুন!");
             audio.play().catch(()=>{});
-            
-            // Advanced Love Logic using Names, Years and Months
-            let m1 = parseInt(document.getElementById('month1').value);
-            let m2 = parseInt(document.getElementById('month2').value);
-            
-            let nameSum = n1.length + n2.length;
-            let yearDiff = Math.abs(y1 - y2);
-            let monthFactor = Math.abs(m1 - m2);
-            
-            let finalScore = (nameSum * 3 + (10 - yearDiff) + (12 - monthFactor)) % 41 + 59;
-            if (finalScore > 100) finalScore = 99;
-
-            showResult(finalScore);
+            showResult(Math.floor(Math.random() * 41 + 59));
         }
 
         function showResult(score) {
             document.getElementById('calc-section').style.display = 'none';
             document.getElementById('quiz-section').style.display = 'none';
             document.getElementById('result-box').style.display = 'block';
+            document.getElementById('tips-area').innerText = tipsBank[Math.floor(Math.random() * tipsBank.length)];
+
             let cur = 0;
             const t = setInterval(() => {
-                if(cur >= score) { clearInterval(t); finalize(score); }
-                else {
+                if(cur >= score) { 
+                    clearInterval(t); 
+                    document.getElementById('final-msg').innerText = score > 85 ? "Perfect Soulmate! ❤️" : "Great Bond! ✨";
+                    if(score > 85) confetti();
+                    setTimeout(() => { document.getElementById('rating-modal').style.display = 'flex'; }, 5000);
+                } else {
                     cur++;
                     document.getElementById('score-val').innerText = cur + "%";
                     document.getElementById('meter-fill').style.transform = `translateX(-50%) rotate(${cur * 1.8}deg)`;
                 }
-            }, 25);
+            }, 30);
         }
 
-        function finalize(s) {
-            const msg = document.getElementById('final-msg');
-            if(s > 85) { msg.innerText = "পারফেক্ট ম্যাচ! তোমাদের দুজনের ভবিষ্যৎ খুব উজ্জ্বল। 💍"; confetti(); }
-            else if(s > 65) { msg.innerText = "দারুণ বন্ডিং! তোমাদের মধ্যে বোঝাপড়া খুব ভালো। ✨"; }
-            else { msg.innerText = "সম্পর্কটা আরও একটু সময় আর যত্ন দাবি করে। ☕"; }
+        function setRating(n) {
+            const stars = document.getElementById('star-container').children;
+            for(let i=0; i<5; i++) stars[i].classList.toggle('active', i < n);
+            const msgs = ratingsData[n];
+            document.getElementById('rating-msg').innerText = msgs[Math.floor(Math.random() * msgs.length)];
+            if(n === 5) confetti();
         }
+
+        function closeRating() { document.getElementById('rating-modal').style.display = 'none'; }
     </script>
 </body>
 </html>
