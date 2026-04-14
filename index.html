@@ -6,6 +6,7 @@
     <title>Love Calc Ultra Pro - Pritam Mistry</title>
     
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     
     <style>
@@ -46,22 +47,31 @@
         .meter-container { width: 120px; height: 60px; position: relative; margin: 15px auto; overflow: hidden; border-radius: 100px 100px 0 0; background: #eee; }
         #meter-fill { position: absolute; top: 100%; left: 50%; width: 100%; height: 100%; background: #ff4d6d; transform-origin: top center; transform: translateX(-50%) rotate(0deg); transition: 2s; }
         
-        .tips-box { background: rgba(255,255,255,0.5); padding: 15px; border-radius: 15px; margin-top: 15px; border: 1px dashed #ff4d6d; font-size: 13px; font-style: italic; color: #444; line-height: 1.5; }
+        .tips-box { background: rgba(255,255,255,0.5); padding: 15px; border-radius: 15px; margin-top: 15px; border: 1px dashed #ff4d6d; font-size: 13px; font-style: italic; color: #444; line-height: 1.5; text-align: left; }
 
-        /* Rating Modal */
+        /* History Styling */
+        .history-section {
+            margin-top: 20px; text-align: left; background: rgba(255, 255, 255, 0.4); 
+            padding: 15px; border-radius: 20px; border: 1px solid var(--border);
+        }
+        .history-item {
+            background: rgba(255, 255, 255, 0.6); margin-bottom: 8px; padding: 8px 12px; 
+            border-radius: 10px; display: flex; justify-content: space-between; align-items: center; 
+            border-left: 3px solid #ff4d6d; font-size: 12px;
+        }
+
         #rating-modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;
         }
-        .modal-content { background: white; padding: 30px; border-radius: 25px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .modal-content { background: white; padding: 25px; border-radius: 25px; width: 90%; max-width: 350px; text-align: center; }
         .stars { font-size: 35px; cursor: pointer; color: #ccc; margin: 10px 0; }
         .stars span.active { color: #f1c40f; }
 
-        /* Social Links Style */
         .contact-us { margin-top: 25px; border-top: 1px solid var(--border); padding-top: 15px; }
         .social-links a {
-            display: inline-block; margin: 0 10px; color: #333; text-decoration: none;
-            font-size: 11px; background: rgba(255,255,255,0.4); padding: 8px 15px; border-radius: 20px; font-weight: bold;
+            display: inline-block; margin: 0 5px; color: #333; text-decoration: none;
+            font-size: 10px; background: rgba(255,255,255,0.4); padding: 6px 12px; border-radius: 20px; font-weight: bold;
         }
     </style>
 </head>
@@ -89,28 +99,40 @@
         </div>
 
         <div id="quiz-section" style="display:none;">
-            <h4 id="q-text" style="margin-bottom: 15px; font-size: 15px;"></h4>
+            <h4 id="q-text" style="margin-bottom: 15px; font-size: 15px; min-height: 45px;"></h4>
             <div id="options-area"></div>
             <p id="q-progress" style="font-size: 11px; margin-top: 10px; color: #555;"></p>
         </div>
 
         <div id="result-box" style="display:none;">
+            <h3 id="display-names" style="font-size: 18px; margin-bottom: 5px; color: #ff4d6d;"></h3>
             <div class="meter-container"><div id="meter-fill"></div></div>
             <h2 id="score-val" style="color:#ff4d6d; font-size: 45px;">0%</h2>
             <p id="final-msg" style="font-weight: 600; padding: 5px; font-size: 14px;"></p>
             <div id="tips-area" class="tips-box"></div>
-            <button class="btn-main" onclick="location.reload()">Try Again 🔄</button>
+            
+            <div id="action-btns" style="margin-top: 15px;">
+                <button class="btn-main" onclick="saveToGallery()" style="background: #333; margin-bottom: 10px;">Save To Gallery 📸</button>
+                <button class="btn-main" onclick="location.reload()" style="background: transparent; border: 1px solid #ff4d6d; color: #ff4d6d;">Retry 🔄</button>
+            </div>
         </div>
 
-        <div class="contact-us">
+        <div id="history-container" class="history-section" style="display:none;">
+            <h4 style="font-size: 13px; color: #ff4d6d; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                Recent History 📜 
+                <span onclick="clearHistory()" style="font-size: 10px; color: #666; cursor: pointer; text-decoration: underline;">Clear All</span>
+            </h4>
+            <div id="history-list"></div>
+        </div>
+
+        <div class="contact-us" id="contact-sec">
             <p style="font-size: 11px; margin-bottom: 10px; font-weight: bold;">Created By Pritam</p>
             <div class="social-links">
                 <a href="https://www.facebook.com/share/1KbDpquDoS/" target="_blank">Facebook</a>
                 <a href="https://www.instagram.com/pritamxii?igsh=MW1ja2N4MXhxMTdiYg==" target="_blank">Instagram</a>
             </div>
         </div>
-
-        <footer style="margin-top: 15px; font-size: 9px; opacity: 0.7;">© 2026 PRITAM MISTRY</footer>
+        <footer id="footer-sec" style="margin-top: 15px; font-size: 9px; opacity: 0.7;">© 2026 PRITAM MISTRY</footer>
     </div>
 
     <div id="rating-modal">
@@ -119,7 +141,7 @@
             <div class="stars" id="star-container">
                 <span onclick="setRating(1)">★</span><span onclick="setRating(2)">★</span><span onclick="setRating(3)">★</span><span onclick="setRating(4)">★</span><span onclick="setRating(5)">★</span>
             </div>
-            <p id="rating-msg" style="font-size: 14px; font-weight: bold; color: #ff4d6d; min-height: 40px;"></p>
+            <p id="rating-msg" style="font-size: 13px; font-weight: bold; color: #ff4d6d; min-height: 40px;"></p>
             <button class="btn-main" onclick="closeRating()" style="padding: 10px; font-size: 12px;">Close</button>
         </div>
     </div>
@@ -128,37 +150,162 @@
         const audio = document.getElementById('loveSong');
         let quizScore = 0; let qIndex = 0; let selectedQuestions = [];
 
-        // Full Question Bank (Selected for rotation)
         const questionBank = [
             { q: "তুমি কাউকে পছন্দ করলে প্রথমে কী করো?", a: ["কথা বলার চেষ্টা করি", "চুপচাপ তাকাই", "সোশ্যাল মিডিয়ায় স্টক করি", "এড়িয়ে যাই"] },
             { q: "তোমার কাছে “ক্রাশ” মানে কী?", a: ["সাময়িক ভালো লাগা", "গভীর অনুভূতি", "শুধু আকর্ষণ", "কনফিউশন"] },
             { q: "কেউ তোমাকে পছন্দ করলে তুমি কীভাবে বুঝো?", a: ["ওর আচরণ দেখে", "বন্ধুরা বলে", "মেসেজিং দেখে", "বুঝতেই পারি না"] },
             { q: "প্রথম মেসেজ কে দেবে বলে মনে করো?", a: ["আমি", "ও", "যার ইচ্ছে", "কেউ না"] },
             { q: "প্রথম ডেট কোথায় পছন্দ?", a: ["ক্যাফে", "পার্ক", "সিনেমা", "অনলাইন কল"] },
+            { q: "তুমি বেশি কিসে আকর্ষিত হও?", a: ["লুক", "পার্সোনালিটি", "হিউমার", "কেয়ার"] },
             { q: "ভালোবাসা শুরু হয় কীভাবে?", a: ["বন্ধুত্ব দিয়ে", "আকর্ষণ দিয়ে", "সময়ের সাথে", "হঠাৎ"] },
+            { q: "প্রথম ইমপ্রেশন কতটা গুরুত্বপূর্ণ?", a: ["খুবই", "মাঝারি", "কম", "কোনো গুরুত্ব নেই"] },
             { q: "তুমি কি “লাভ অ্যাট ফার্স্ট সাইট” বিশ্বাস করো?", a: ["হ্যাঁ", "না", "কখনো কখনো", "জানি না"] },
+            { q: "তোমার কাছে আইডিয়াল পার্টনার কেমন?", a: ["কেয়ারিং", "ফানি", "ম্যাচিউর", "সবগুলো"] },
             { q: "“সিচুয়েশনশিপ” মানে কী মনে করো?", a: ["নামহীন সম্পর্ক", "বন্ধুত্ব", "প্রেম", "কনফিউশন"] },
+            { q: "তুমি কি সিচুয়েশনশিপে কমফর্টেবল?", a: ["হ্যাঁ", "না", "পরিস্থিতির উপর", "জানি না"] },
+            { q: "ক্লিয়ারিটি কতটা জরুরি?", a: ["খুব", "মাঝারি", "কম", "জরুরি না"] },
+            { q: "“লেবেল” দরকার?", a: ["হ্যাঁ", "না", "পরে", "পরিস্থিতি অনুযায়ী"] },
+            { q: "তুমি কি একসাথে একাধিক জনের সাথে কথা বলো?", a: ["হ্যাঁ", "না", "কখনো", "জানি না"] },
+            { q: "কেউ যদি কনফিউজ করে রাখে?", a: ["ছেড়ে দিই", "কথা বলি", "অপেক্ষা করি", "ইগনোর করি"] },
+            { q: "“ঘোস্টিং” সম্পর্কে মত?", a: ["খারাপ", "ঠিক আছে", "পরিস্থিতি অনুযায়ী", "করি"] },
+            { q: "তুমি কি কখনো কাউকে ঘোস্ট করেছো?", a: ["হ্যাঁ", "না", "একবার", "মনে নেই"] },
+            { q: "সিচুয়েশনশিপে সবচেয়ে বড় সমস্যা কী?", a: ["অনিশ্চয়তা", "ইমোশন", "কমিউনিকেশন", "ট্রাস্ট"] },
+            { q: "তুমি কি ক্লোজার চাই?", a: ["হ্যাঁ", "না", "কখনো", "দরকার নেই"] },
+            { q: "ভালোবাসা প্রকাশ করো কীভাবে?", a: ["কথা দিয়ে", "কাজ দিয়ে", "গিফট দিয়ে", "সময় দিয়ে"] },
+            { q: "কেয়ার দেখানো কীভাবে?", a: ["খোঁজ নেওয়া", "সাহায্য করা", "সময় দেওয়া", "সব"] },
+            { q: "“আই লাভ ইউ” কতবার বলা উচিত?", a: ["প্রতিদিন", "মাঝে মাঝে", "কম", "দরকার নেই"] },
+            { q: "তোমার লাভ ল্যাঙ্গুয়েজ কী?", a: ["ওয়ার্ডস", "অ্যাকশন", "টাইম", "গিফট"] },
+            { q: "তুমি কি সহজে কেয়ার করো?", a: ["হ্যাঁ", "না", "নির্ভর করে", "জানি না"] },
+            { q: "তোমার কাছে কেয়ার মানে?", a: ["খেয়াল রাখা", "পাশে থাকা", "বুঝতে পারা", "সব"] },
+            { q: "তুমি কি ওভারকেয়ারিং?", a: ["হ্যাঁ", "না", "কখনো", "জানি না"] },
+            { q: "তোমার কাছে ভালোবাসা = ?", a: ["ট্রাস্ট", "রেসপেক্ট", "কেয়ার", "সব"] },
+            { q: "তুমি কি স্যাক্রিফাইস করতে পারো?", a: ["হ্যাঁ", "না", "সীমিত", "জানি না"] },
+            { q: "তোমার কাছে “এফোর্ট” কতটা গুরুত্বপূর্ণ?", a: ["খুব", "মাঝারি", "কম", "জরুরি না"] },
+            { q: "তুমি কি সহজে ট্রাস্ট করো?", a: ["হ্যাঁ", "না", "সময় লাগে", "নির্ভর করে"] },
             { q: "জেলাসি কি নরমাল?", a: ["হ্যাঁ", "না", "একটু", "বেশি"] },
-            { q: "ব্রেকআপের পর কী করো?", a: ["মুভ অন", "কাঁদি", "বন্ধুর সাথে থাকি", "একা থাকি"] },
-            { q: "ডেইলি কথা বলা জরুরি?", a: ["হ্যাঁ", "না", "মাঝেমাঝে", "মুড অনুযায়ী"] },
+            { q: "পার্টনার অন্য কারো সাথে কথা বললে?", a: ["ঠিক আছে", "সন্দেহ", "জেলাসি", "কথা বলি"] },
+            { q: "তুমি কি পজেসিভ?", a: ["হ্যাঁ", "না", "একটু", "জানি না"] },
+            { q: "ট্রাস্ট ব্রেক হলে?", a: ["শেষ", "ঠিক করি", "সময় দিই", "কনফিউজ"] },
+            { q: "তুমি কি ওভারথিংক করো?", a: ["হ্যাঁ", "না", "কখনো", "সবসময়"] },
+            { q: "ফাইট হলে কী করো?", a: ["কথা বলি", "চুপ থাকি", "রাগ করি", "এড়িয়ে যাই"] },
+            { q: "কে আগে সরি বলবে?", a: ["আমি", "ও", "যার ভুল", "কেউ না"] },
+            { q: "তুমি কি ইমোশনাল?", a: ["হ্যাঁ", "না", "মাঝামাঝি", "জানি না"] },
+            { q: "তুমি কি সহজে কাঁদো?", a: ["হ্যাঁ", "না", "কখনো", "লুকাই"] },
+            { q: "লং ডিস্ট্যান্স রিলেশন?", a: ["সম্ভব", "কঠিন", "না", "নির্ভর করে"] },
+            { q: "Daily কথা বলা জরুরি?", a: ["হ্যাঁ", "না", "মাঝেমাঝে", "মুড অনুযায়ী"] },
+            { q: "Space কতটা দরকার?", a: ["বেশি", "মাঝারি", "কম", "দরকার নেই"] },
+            { q: "সোশ্যাল মিডিয়া পোস্ট?", a: ["চাই", "না", "মাঝে মাঝে", "দরকার নেই"] },
+            { q: "পাসওয়ার্ড শেয়ার করা উচিত?", a: ["হ্যাঁ", "না", "ট্রাস্টে", "দরকার নেই"] },
+            { q: "বন্ধুদের সাথে সময় vs পার্টনার?", a: ["পার্টনার", "বন্ধু", "ব্যালান্স", "মুড"] },
+            { q: "তুমি কি প্ল্যানিং করো?", a: ["হ্যাঁ", "না", "কখনো", "ও করে"] },
             { q: "সারপ্রাইজ পছন্দ?", a: ["হ্যাঁ", "না", "কখনো", "ছোট হলে"] },
+            { q: "তুমি কি ডমিনেন্ট না সাবমিসিভ?", a: ["ডমিনেন্ট", "সাবমিসিভ", "মিক্স", "জানি না"] },
+            { q: "রিলেশনশিপে সবচেয়ে জরুরি কী?", a: ["ট্রাস্ট", "কেয়ার", "কমিউনিকেশন", "সব"] },
+            { q: "ব্রেকআপের পর কী করো?", a: ["মুভ অন", "কাঁদি", "বন্ধুর সাথে থাকি", "একা থাকি"] },
+            { q: "এক্সের সাথে বন্ধু থাকা যায়?", a: ["হ্যাঁ", "না", "কখনো", "কঠিন"] },
+            { q: "তুমি কি দ্রুত মুভ অন করো?", a: ["হ্যাঁ", "না", "সময় লাগে", "নির্ভর করে"] },
+            { q: "ভালোবাসা একবারই হয়?", a: ["হ্যাঁ", "না", "জানি না", "অনেকবার"] },
+            { q: "তুমি কি সেকেন্ড চান্স দাও?", a: ["হ্যাঁ", "না", "পরিস্থিতি অনুযায়ী", "একবার"] },
+            { q: "রেড ফ্ল্যাগ দেখলে?", a: ["এড়িয়ে যাই", "কথা বলি", "ইগনোর করি", "থাকি"] },
+            { q: "গ্রীন ফ্ল্যাগ কী?", a: ["কেয়ার", "ট্রাস্ট", "রেসপেক্ট", "সব"] },
+            { q: "তুমি কি সিরিয়াস রিলেশন চাও?", a: ["হ্যাঁ", "না", "এখন না", "জানি না"] },
             { q: "ভালোবাসা না ক্যারিয়ার আগে?", a: ["ভালোবাসা", "ক্যারিয়ার", "ব্যালান্স", "পরিস্থিতি"] },
-            { q: "ভবিষ্যৎ কল্পনা করো কারো সাথে?", a: ["হ্যাঁ", "না", "কখনো", "ভয় লাগে"] },
-            { q: "ভালোবাসা তোমার কাছে কী?", a: ["শান্তি", "অনুভূতি", "দায়িত্ব", "সবকিছু 💖"] }
-            // Note: In real use, you can keep all 140 here for better shuffle
+            { q: "তুমি কি নিজের জন্য ভালোবাসো?", a: ["হ্যাঁ", "না", "শিখছি", "জানি না"] },
+            { q: "তুমি কি সহজে প্রেমে পড়ে যাও?", a: ["হ্যাঁ", "না", "কখনো কখনো", "সময় লাগে"] },
+            { q: "কারো জন্য অপেক্ষা করতে পারো?", a: ["হ্যাঁ", "না", "নির্ভর করে", "কিছুদিন"] },
+            { q: "“সোলমেট” বিশ্বাস করো?", a: ["হ্যাঁ", "না", "হয়তো", "জানি না"] },
+            { q: "তুমি কি নিজের ফিলিংস লুকাও?", a: ["হ্যাঁ", "না", "কখনো", "বেশিরভাগ সময়"] },
+            { q: "ভালোবাসা বেশি কষ্ট দেয় না সুখ?", a: ["সুখ", "কষ্ট", "দুটোই", "জানি না"] },
+            { q: "তুমি কি গভীর কথা বলতে পছন্দ করো?", a: ["হ্যাঁ", "না", "মুড অনুযায়ী", "মাঝে মাঝে"] },
+            { q: "“মিস করা” কীভাবে বোঝাও?", a: ["মেসেজ করি", "কল করি", "চুপ থাকি", "স্ট্যাটাস দিই"] },
+            { q: "তুমি কি কাউকে খুব মিস করো?", a: ["হ্যাঁ", "না", "মাঝে মাঝে", "বলতে চাই না"] },
+            { q: "ভালোবাসা কি সময়ের সাথে কমে?", a: ["হ্যাঁ", "না", "নির্ভর করে", "বাড়ে"] },
+            { q: "তুমি কি লয়্যাল?", a: ["হ্যাঁ", "না", "চেষ্টা করি", "নির্ভর করে"] },
+            { q: "তুমি কি আগে মেসেজ দাও?", a: ["হ্যাঁ", "না", "মুড অনুযায়ী", "অপেক্ষা করি"] },
+            { q: "“লাস্ট সিন” দেখে রাগ হয়?", a: ["হ্যাঁ", "না", "কখনো", "বেশি"] },
+            { q: "রিপ্লাই দেরি হলে?", a: ["বুঝি", "রাগ করি", "ওভারথিংক", "ইগনোর"] },
+            { q: "কল না টেক্সট—কোনটা পছন্দ?", a: ["কল", "টেক্সট", "দুটোই", "মুড"] },
+            { q: "তুমি কি লম্বা কথা বলতে পারো?", a: ["হ্যাঁ", "না", "মাঝে মাঝে", "কার উপর নির্ভর"] },
+            { q: "“ড্রাই টেক্সট” পেলে?", a: ["ইগনোর", "প্রশ্ন করি", "রাগ করি", "একই করি"] },
+            { q: "Honest হওয়া কতটা জরুরি?", a: ["খুব", "মাঝারি", "কম", "দরকার নেই"] },
+            { q: "তুমি কি সব কথা শেয়ার করো?", a: ["হ্যাঁ", "না", "কিছু", "নির্ভর করে"] },
+            { q: "“Seen zone” করলে কী ভাবো?", a: ["ব্যস্ত", "ইগনোর", "রাগ", "কিছু না"] },
+            { q: "কথা না হলে কি দূরত্ব বাড়ে?", a: ["হ্যাঁ", "না", "কখনো", "নির্ভর করে"] },
+            { q: "তুমি কি সহজে অ্যাটাচড হয়ে যাও?", a: ["হ্যাঁ", "না", "সময় লাগে", "নির্ভর করে"] },
+            { q: "কারো সাথে অভ্যাস হয়ে গেলে?", a: ["ছাড়তে পারি না", "চেষ্টা করি", "কষ্ট হয়", "ইগনোর"] },
+            { q: "তুমি কি “good morning/night” আশা করো?", a: ["হ্যাঁ", "না", "মাঝে মাঝে", "দরকার নেই"] },
+            { q: "ডেইলি আপডেট দরকার?", a: ["হ্যাঁ", "না", "কিছুটা", "মুড"] },
+            { q: "তুমি কি clingy?", a: ["হ্যাঁ", "না", "একটু", "জানি না"] },
+            { q: "তুমি কি সহজে দূরে সরে যাও?", a: ["হ্যাঁ", "না", "কষ্টে", "নির্ভর করে"] },
+            { q: "তুমি কি over-attach হও?", a: ["হ্যাঁ", "না", "কখনো", "জানি না"] },
+            { q: "কারো অভ্যাস ভাঙা কতটা কঠিন?", a: ["খুব", "মাঝারি", "কম", "সহজ"] },
+            { q: "তুমি কি attention চাও?", a: ["হ্যাঁ", "না", "একটু", "মুড"] },
+            { q: "Ignored হলে কী করো?", a: ["দূরে যাই", "প্রশ্ন করি", "রাগ করি", "চুপ থাকি"] },
+            { q: "Future imagine করো কারো সাথে?", a: ["হ্যাঁ", "না", "কখনো", "ভয় লাগে"] },
+            { q: "বিয়ে নিয়ে ভাবো?", a: ["হ্যাঁ", "না", "পরে", "জানি না"] },
+            { q: "City change করবে?", a: ["হ্যাঁ", "না", "নির্ভর করে", "কঠিন"] },
+            { q: "Family approval কতটা জরুরি?", a: ["খুব", "মাঝারি", "কম", "দরকার নেই"] },
+            { q: "Long-term না short-term?", a: ["long-term", "short-term", "দেখি", "জানি না"] },
+            { q: "Realistic না dreamy?", a: ["realistic", "dreamy", "mix", "জানি না"] },
+            { q: "Heartbreak এর ভয় আছে?", a: ["হ্যাঁ", "না", "একটু", "লুকাই"] },
+            { q: "আবার ভালোবাসতে পারবে?", a: ["হ্যাঁ", "না", "সময় লাগবে", "জানি না"] },
+            { q: "“Right person wrong time” বিশ্বাস করো?", a: ["হ্যাঁ", "না", "কখনো", "জানি না"] },
+            { q: "শেষ প্রশ্ন — ভালোবাসা তোমার কাছে কী?", a: ["শান্তি", "অনুভূতি", "দায়িত্ব", "সবকিছু 💖"] }
         ];
 
         const tipsBank = [
-            "ভালোবাসার আগে নিজেকে ভালোবাসতে শিখো।", "সবসময় নিজের সম্মান (self-respect) ধরে রাখো।", "কাউকে বদলানোর চেষ্টা না করে accept করো।", "toxic behaviour চিনতে শিখো।", "সন্দেহ বেশি হলে সম্পর্ক ভেঙে যায়।", "ভুল থেকে শিখো, বারবার repeat কোরো না।", " commitment-এর আগে মানুষটাকে বুঝো।", "যে তোমাকে শান্তি দেয়, তাকেই বেছে নাও।"
+            "ভালোবাসার আগে নিজেকে ভালোবাসতে শিখো।", "সবসময় নিজের সম্মান (self-respect) ধরে রাখো।", "কাউকে বদলানোর চেষ্টা না করে accept করো।", "Toxic behaviour চিনতে শিখো।", "সন্দেহ বেশি হলে সম্পর্ক ভেঙে যায়।", "ভুল থেকে শিখো, বারবার repeat কোরো না।", "Commitment-এর আগে মানুষটাকে বুঝো।", "যে তোমাকে শান্তি দেয়, তাকেই বেছে নাও।"
         ];
 
         const ratingsData = {
-            1: ["একদমই সন্তুষ্ট না।", "সময় নষ্ট ছাড়া কিছুই না।", "পুরো experience খারাপ ছিল।"],
-            2: ["expectation meet করতে পারেনি।", "consistency নেই।", "improvement দরকার।"],
-            3: ["মোটামুটি ভালো।", "ঠিকঠাক ছিল।", "okayish মনে হয়েছে।"],
-            4: ["বেশ ভালো লেগেছে।", "positive vibe পেয়েছি।", "recommend করা যায়।"],
-            5: ["একদম perfect!", "expectations এর থেকেও বেশি ভালো।", "worth every moment ❤️"]
+            1: ["একদমই সন্তুষ্ট না।", "পুরো অভিজ্ঞতা খারাপ ছিল।"],
+            2: ["Expectation meet করতে পারেনি।", "উন্নতি দরকার।"],
+            3: ["মোটামুটি ভালো।", "ঠিকঠাক ছিল।"],
+            4: ["বেশ ভালো লেগেছে।", "সন্তুষ্ট।"],
+            5: ["একদম Perfect!", "অসাধারণ অনুভূতি ❤️"]
         };
+
+        // --- History Logic Starts ---
+        window.addEventListener('load', displayHistory);
+
+        function saveToHistory(names, score) {
+            let history = JSON.parse(localStorage.getItem('loveHistory')) || [];
+            const newEntry = {
+                names: names,
+                score: score,
+                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+            };
+            history.unshift(newEntry);
+            if(history.length > 5) history.pop();
+            localStorage.setItem('loveHistory', JSON.stringify(history));
+            displayHistory();
+        }
+
+        function displayHistory() {
+            const historyList = document.getElementById('history-list');
+            const container = document.getElementById('history-container');
+            let history = JSON.parse(localStorage.getItem('loveHistory')) || [];
+
+            if(history.length > 0) {
+                container.style.display = 'block';
+                historyList.innerHTML = history.map(item => `
+                    <div class="history-item">
+                        <span><strong>${item.names}</strong></span>
+                        <span style="color:#ff4d6d; font-weight:bold;">${item.score}% <small style="color:#888; font-weight:normal;">(${item.time})</small></span>
+                    </div>
+                `).join('');
+            } else {
+                container.style.display = 'none';
+            }
+        }
+
+        function clearHistory() {
+            if(confirm("সব হিস্ট্রি কি মুছে ফেলতে চাও?")) {
+                localStorage.removeItem('loveHistory');
+                displayHistory();
+            }
+        }
+        // --- History Logic Ends ---
 
         function toggleMode(mode) {
             document.getElementById('calc-section').style.display = mode === 'calc' ? 'block' : 'none';
@@ -167,16 +314,15 @@
         }
 
         function startQuiz() {
-            // SHUFFLE: Randomly picks 15 questions from bank
-            selectedQuestions = [...questionBank].sort(() => Math.random() - 0.5);
+            selectedQuestions = [...questionBank].sort(() => Math.random() - 0.5).slice(0, 15);
             qIndex = 0; quizScore = 0;
             showQuestion();
         }
 
         function showQuestion() {
-            if(qIndex >= 15 || qIndex >= selectedQuestions.length) { 
+            if(qIndex >= 15) { 
                 let calculatedScore = Math.floor(Math.random() * 41 + 59);
-                showResult(calculatedScore); 
+                showResult(calculatedScore, "Quiz Result"); 
                 return; 
             }
             const q = selectedQuestions[qIndex];
@@ -193,12 +339,13 @@
         function startAnalysis() {
             const n1 = document.getElementById('name1').value;
             const n2 = document.getElementById('name2').value;
-            if(!n1 || !n2) return alert("দয়া করে নাম পূরণ করুন!");
+            if(!n1 || !n2) return alert("দয়া করে নাম পূরণ করুন!");
+            document.getElementById('display-names').innerText = n1 + " ❤️ " + n2;
             audio.play().catch(()=>{});
-            showResult(Math.floor(Math.random() * 41 + 59));
+            showResult(Math.floor(Math.random() * 41 + 59), "Calculation Result");
         }
 
-        function showResult(score) {
+        function showResult(score, type) {
             document.getElementById('calc-section').style.display = 'none';
             document.getElementById('quiz-section').style.display = 'none';
             document.getElementById('result-box').style.display = 'block';
@@ -208,7 +355,12 @@
             const t = setInterval(() => {
                 if(cur >= score) { 
                     clearInterval(t); 
-                    document.getElementById('final-msg').innerText = score > 85 ? "Perfect Soulmate! ❤️" : "Great Bond! ✨";
+                    
+                    // Save to history once result is ready
+                    let nameText = (type === "Quiz Result") ? "Love Quiz" : document.getElementById('name1').value + " + " + document.getElementById('name2').value;
+                    saveToHistory(nameText, score);
+
+                    document.getElementById('final-msg').innerText = score > 85 ? "Soulmate Alert! ❤️" : "Great Bond! ✨";
                     if(score > 85) confetti();
                     setTimeout(() => { document.getElementById('rating-modal').style.display = 'flex'; }, 5000);
                 } else {
@@ -217,6 +369,20 @@
                     document.getElementById('meter-fill').style.transform = `translateX(-50%) rotate(${cur * 1.8}deg)`;
                 }
             }, 30);
+        }
+
+        function saveToGallery() {
+            const node = document.getElementById('capture-node');
+            const actionBtns = document.getElementById('action-btns');
+            actionBtns.style.display = 'none'; 
+            
+            html2canvas(node, { scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'Love_Result_Pritam.png';
+                link.href = canvas.toDataURL();
+                link.click();
+                actionBtns.style.display = 'block';
+            });
         }
 
         function setRating(n) {
