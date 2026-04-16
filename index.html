@@ -2,398 +2,323 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Love Calc Ultra Pro - Pritam Mistry</title>
-    
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Habit Master Pro 2026</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --neon: #ff4d6d; --glass: rgba(255, 255, 255, 0.25); --border: rgba(255, 255, 255, 0.4); }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        :root {
+            --bg: #F9FBFC; 
+            --card: #FFFFFF;
+            --primary: #B2AC88; 
+            --text: #4A4A4A;
+            --today-highlight: #FFF4E6; 
+            --pastel-purple-low: rgba(179, 157, 219, 0.4); 
+        }
+
+        /* Color Palette for Habits */
+        .habit-row-0 { --row-color: #E8F5E9; --text-color: #2E7D32; --accent-color: #81C784; } /* Green */
+        .habit-row-1 { --row-color: #F1F3E9; --text-color: #556B2F; --accent-color: #A3AD85; } /* Sage */
+        .habit-row-2 { --row-color: #E3F2FD; --text-color: #1565C0; --accent-color: #90CAF9; } /* Blue */
+        .habit-row-3 { --row-color: #F3E5F5; --text-color: #6A1B9A; --accent-color: #CE93D8; } /* Purple */
+        .habit-row-4 { --row-color: #FAF3E0; --text-color: #8D6E63; --accent-color: #D7CCC8; } /* Tan */
+
         body {
-            background: linear-gradient(45deg, #ff9a9e, #fad0c4, #a1c4fd, #c2e9fb);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 10px; color: #333;
-        }
-        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-
-        #capture-node {
-            background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border); width: 100%; max-width: 450px;
-            padding: 25px 15px; border-radius: 40px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 10px;
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
-        .logo-text { font-family: 'Brush Script MT', cursive; font-size: 3.5rem; background: linear-gradient(45deg, #ff4d6d, #ff8fa3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; flex-grow: 1; width: 100%; box-sizing: border-box; }
+
+        .card { 
+            background: var(--card); border-radius: 20px; padding: 20px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); text-align: center;
+        }
+
+        .progress-card { background: white; padding: 25px 15px; border-radius: 24px; }
+        .progress-title { font-size: 16px; font-weight: 700; color: #636E72; }
+        .perc-val { font-size: 60px; font-weight: 800; color: #D1C4E9; line-height: 1.2; }
+        .date-display { font-size: 14px; color: #B2BEC3; font-weight: 500; }
+
+        .header-section { display: flex; justify-content: space-between; align-items: center; text-align: left; }
+        h3 { margin: 0; color: var(--primary); font-size: 18px; letter-spacing: 0.5px; }
+
+        select { 
+            padding: 8px 12px; border-radius: 12px; border: 1px solid #EEE; 
+            background: white; font-weight: 600; color: var(--text); outline: none;
+        }
+
+        .stats-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        @media (min-width: 768px) { .stats-grid { grid-template-columns: 320px 1fr; } }
+
+        .chart-container { height: 240px; padding: 15px; background: white; border-radius: 24px; }
+
+        .table-wrapper {
+            width: 100%; overflow-x: auto; border-radius: 20px; 
+            background: white; -webkit-overflow-scrolling: touch;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.02);
+        }
+
+        table { border-collapse: collapse; min-width: 1000px; width: 100%; border-radius: 20px; }
+        th { padding: 12px 5px; text-align: center; }
         
-        input, select { 
-            width: 100%; padding: 12px; border: 1px solid var(--border); background: rgba(255,255,255,0.6); 
-            border-radius: 12px; margin-bottom: 8px; outline: none; font-size: 13px;
+        .week-header { font-size: 11px; font-weight: 800; color: #8D6E63; background: #FFF4F0; text-transform: uppercase; }
+        .day-label { font-size: 10px; color: #B2BEC3; border-bottom: 1px solid #F1F1F1; }
+        .date-label { font-size: 12px; font-weight: 800; padding-bottom: 10px; }
+
+        .habit-name-cell {
+            position: sticky; left: 0; z-index: 10;
+            min-width: 180px; text-align: left; padding: 15px 20px;
+            font-weight: 700; border-right: 1px solid rgba(0,0,0,0.05);
+            background-color: var(--row-color);
+            color: var(--text-color);
+            border-left: 5px solid var(--accent-color);
         }
 
-        .btn-main { 
-            width: 100%; padding: 15px; border: none; border-radius: 15px; background: linear-gradient(45deg, #ff4d6d, #ff8fa3);
-            color: white; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px;
+        .day-cell { 
+            padding: 10px 5px; 
+            background-color: #FFF;
+            transition: 0.2s;
         }
 
-        .option-btn { 
-            display: block; width: 100%; padding: 12px; margin: 8px 0; border: 1px solid var(--border);
-            background: rgba(255,255,255,0.8); border-radius: 10px; cursor: pointer; text-align: left; font-size: 14px;
-        }
-        .option-btn:hover { background: #ff4d6d; color: white; }
-        
-        .meter-container { width: 120px; height: 60px; position: relative; margin: 15px auto; overflow: hidden; border-radius: 100px 100px 0 0; background: #eee; }
-        #meter-fill { position: absolute; top: 100%; left: 50%; width: 100%; height: 100%; background: #ff4d6d; transform-origin: top center; transform: translateX(-50%) rotate(0deg); transition: 2s; }
-        
-        .tips-box { background: rgba(255,255,255,0.5); padding: 15px; border-radius: 15px; margin-top: 15px; border: 1px dashed #ff4d6d; font-size: 13px; font-style: italic; color: #444; line-height: 1.5; text-align: left; }
+        /* The colored background for checked days */
+        .day-cell.checked { background-color: var(--row-color); }
 
-        /* History Styling */
-        .history-section {
-            margin-top: 20px; text-align: left; background: rgba(255, 255, 255, 0.4); 
-            padding: 15px; border-radius: 20px; border: 1px solid var(--border);
-        }
-        .history-item {
-            background: rgba(255, 255, 255, 0.6); margin-bottom: 8px; padding: 8px 12px; 
-            border-radius: 10px; display: flex; justify-content: space-between; align-items: center; 
-            border-left: 3px solid #ff4d6d; font-size: 12px;
+        .streak-badge {
+            font-size: 9px; background: white; color: #FF7675;
+            padding: 2px 6px; border-radius: 10px; margin-left: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
-        #rating-modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;
-        }
-        .modal-content { background: white; padding: 25px; border-radius: 25px; width: 90%; max-width: 350px; text-align: center; }
-        .stars { font-size: 35px; cursor: pointer; color: #ccc; margin: 10px 0; }
-        .stars span.active { color: #f1c40f; }
+        .today-col { background-color: var(--today-highlight) !important; outline: 1px solid #FFE0B2; }
 
-        .contact-us { margin-top: 25px; border-top: 1px solid var(--border); padding-top: 15px; }
-        .social-links a {
-            display: inline-block; margin: 0 5px; color: #333; text-decoration: none;
-            font-size: 10px; background: rgba(255,255,255,0.4); padding: 6px 12px; border-radius: 20px; font-weight: bold;
+        input[type="checkbox"] { 
+            width: 22px; height: 22px; 
+            accent-color: var(--accent-color); 
+            cursor: pointer; 
+            border-radius: 6px;
+        }
+
+        .delete-btn { color: rgba(0,0,0,0.1); border: none; background: none; font-size: 16px; cursor: pointer; float: right; transition: 0.2s; }
+        .delete-btn:hover { color: #FF7675; }
+
+        .backup-controls { display: flex; justify-content: center; gap: 10px; margin-top: 10px; padding-bottom: 30px; }
+        .btn-easy { 
+            font-size: 11px; padding: 10px 15px; border-radius: 12px; border: 1px solid #EEE; 
+            background: white; color: #95A5A6; font-weight: bold; cursor: pointer;
+        }
+
+        .developed-by {
+            text-align: center; padding: 25px; color: var(--pastel-purple-low);
+            font-weight: 800; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
         }
     </style>
 </head>
 <body>
 
-    <audio id="loveSong" loop><source src="Real_love.mp3" type="audio/mpeg"></audio>
-
-    <div id="capture-node">
-        <div class="logo-text">Love Calc</div>
-        <p style="font-size: 10px; font-weight: bold; margin-bottom: 15px;">ADVANCED EDITION | BY PRITAM MISTRY</p>
-
-        <div id="calc-section">
-            <input type="text" id="name1" placeholder="Your Name">
-            <div style="display: flex; gap: 5px;">
-                <input type="number" id="year1" placeholder="Birth Year">
-                <select id="month1"><option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option><option value="4">Apr</option><option value="5">May</option><option value="6">Jun</option><option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option><option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option></select>
-            </div>
-            <input type="text" id="name2" placeholder="Crush Name">
-            <div style="display: flex; gap: 5px;">
-                <input type="number" id="year2" placeholder="Birth Year">
-                <select id="month2"><option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option><option value="4">Apr</option><option value="5">May</option><option value="6">Jun</option><option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option><option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option></select>
-            </div>
-            <button class="btn-main" onclick="startAnalysis()">Analyse Love ❤️</button>
-            <p onclick="toggleMode('quiz')" style="color: #d63384; cursor: pointer; font-weight: bold; text-decoration: underline; font-size: 13px; margin-top: 15px;">Switch to Love Questions 📝</p>
-        </div>
-
-        <div id="quiz-section" style="display:none;">
-            <h4 id="q-text" style="margin-bottom: 15px; font-size: 15px; min-height: 45px;"></h4>
-            <div id="options-area"></div>
-            <p id="q-progress" style="font-size: 11px; margin-top: 10px; color: #555;"></p>
-        </div>
-
-        <div id="result-box" style="display:none;">
-            <h3 id="display-names" style="font-size: 18px; margin-bottom: 5px; color: #ff4d6d;"></h3>
-            <div class="meter-container"><div id="meter-fill"></div></div>
-            <h2 id="score-val" style="color:#ff4d6d; font-size: 45px;">0%</h2>
-            <p id="final-msg" style="font-weight: 600; padding: 5px; font-size: 14px;"></p>
-            <div id="tips-area" class="tips-box"></div>
-            
-            <div id="action-btns" style="margin-top: 15px;">
-                <button class="btn-main" onclick="saveToGallery()" style="background: #333; margin-bottom: 10px;">Save To Gallery 📸</button>
-                <button class="btn-main" onclick="location.reload()" style="background: transparent; border: 1px solid #ff4d6d; color: #ff4d6d;">Retry 🔄</button>
-            </div>
-        </div>
-
-        <div id="history-container" class="history-section" style="display:none;">
-            <h4 style="font-size: 13px; color: #ff4d6d; margin-bottom: 10px; display: flex; justify-content: space-between;">
-                Recent History 📜 
-                <span onclick="clearHistory()" style="font-size: 10px; color: #666; cursor: pointer; text-decoration: underline;">Clear All</span>
-            </h4>
-            <div id="history-list"></div>
-        </div>
-
-        <div class="contact-us" id="contact-sec">
-            <p style="font-size: 11px; margin-bottom: 10px; font-weight: bold;">Created By Pritam</p>
-            <div class="social-links">
-                <a href="https://www.facebook.com/share/1KbDpquDoS/" target="_blank">Facebook</a>
-                <a href="https://www.instagram.com/pritamxii?igsh=MW1ja2N4MXhxMTdiYg==" target="_blank">Instagram</a>
-            </div>
-        </div>
-        <footer id="footer-sec" style="margin-top: 15px; font-size: 9px; opacity: 0.7;">© 2026 PRITAM MISTRY</footer>
+<div class="container">
+    <div class="card header-section">
+        <h3>Habit Master Pro 2026 🌿</h3>
+        <select id="monthSelect" onchange="changeMonth()">
+            <option>January</option><option>February</option><option>March</option>
+            <option>April</option><option>May</option><option>June</option>
+            <option>July</option><option>August</option><option>September</option>
+            <option>October</option><option>November</option><option>December</option>
+        </select>
     </div>
 
-    <div id="rating-modal">
-        <div class="modal-content">
-            <h3>Rate Your Experience</h3>
-            <div class="stars" id="star-container">
-                <span onclick="setRating(1)">★</span><span onclick="setRating(2)">★</span><span onclick="setRating(3)">★</span><span onclick="setRating(4)">★</span><span onclick="setRating(5)">★</span>
-            </div>
-            <p id="rating-msg" style="font-size: 13px; font-weight: bold; color: #ff4d6d; min-height: 40px;"></p>
-            <button class="btn-main" onclick="closeRating()" style="padding: 10px; font-size: 12px;">Close</button>
+    <div class="stats-grid">
+        <div class="card progress-card">
+            <div class="progress-title">Today's Progress</div>
+            <div class="perc-val" id="todayPercent">0%</div>
+            <div class="date-display" id="fullDateDisplay">Loading...</div>
+        </div>
+        
+        <div class="card chart-container">
+            <canvas id="habitChart"></canvas>
         </div>
     </div>
 
-    <script>
-        const audio = document.getElementById('loveSong');
-        let quizScore = 0; let qIndex = 0; let selectedQuestions = [];
+    <div class="card" style="padding: 10px 15px;">
+        <div style="display:flex; gap:10px;">
+            <input type="text" id="habitInput" style="flex:1; padding:12px; border:1px solid #F1F1F1; border-radius:15px; outline:none;" placeholder="What's your goal today?">
+            <button onclick="addHabit()" style="background:var(--primary); color:white; border:none; padding:0 20px; border-radius:15px; font-weight:bold; cursor:pointer;">+ Add</button>
+        </div>
+    </div>
 
-        const questionBank = [
-            { q: "তুমি কাউকে পছন্দ করলে প্রথমে কী করো?", a: ["কথা বলার চেষ্টা করি", "চুপচাপ তাকাই", "সোশ্যাল মিডিয়ায় স্টক করি", "এড়িয়ে যাই"] },
-            { q: "তোমার কাছে “ক্রাশ” মানে কী?", a: ["সাময়িক ভালো লাগা", "গভীর অনুভূতি", "শুধু আকর্ষণ", "কনফিউশন"] },
-            { q: "কেউ তোমাকে পছন্দ করলে তুমি কীভাবে বুঝো?", a: ["ওর আচরণ দেখে", "বন্ধুরা বলে", "মেসেজিং দেখে", "বুঝতেই পারি না"] },
-            { q: "প্রথম মেসেজ কে দেবে বলে মনে করো?", a: ["আমি", "ও", "যার ইচ্ছে", "কেউ না"] },
-            { q: "প্রথম ডেট কোথায় পছন্দ?", a: ["ক্যাফে", "পার্ক", "সিনেমা", "অনলাইন কল"] },
-            { q: "তুমি বেশি কিসে আকর্ষিত হও?", a: ["লুক", "পার্সোনালিটি", "হিউমার", "কেয়ার"] },
-            { q: "ভালোবাসা শুরু হয় কীভাবে?", a: ["বন্ধুত্ব দিয়ে", "আকর্ষণ দিয়ে", "সময়ের সাথে", "হঠাৎ"] },
-            { q: "প্রথম ইমপ্রেশন কতটা গুরুত্বপূর্ণ?", a: ["খুবই", "মাঝারি", "কম", "কোনো গুরুত্ব নেই"] },
-            { q: "তুমি কি “লাভ অ্যাট ফার্স্ট সাইট” বিশ্বাস করো?", a: ["হ্যাঁ", "না", "কখনো কখনো", "জানি না"] },
-            { q: "তোমার কাছে আইডিয়াল পার্টনার কেমন?", a: ["কেয়ারিং", "ফানি", "ম্যাচিউর", "সবগুলো"] },
-            { q: "“সিচুয়েশনশিপ” মানে কী মনে করো?", a: ["নামহীন সম্পর্ক", "বন্ধুত্ব", "প্রেম", "কনফিউশন"] },
-            { q: "তুমি কি সিচুয়েশনশিপে কমফর্টেবল?", a: ["হ্যাঁ", "না", "পরিস্থিতির উপর", "জানি না"] },
-            { q: "ক্লিয়ারিটি কতটা জরুরি?", a: ["খুব", "মাঝারি", "কম", "জরুরি না"] },
-            { q: "“লেবেল” দরকার?", a: ["হ্যাঁ", "না", "পরে", "পরিস্থিতি অনুযায়ী"] },
-            { q: "তুমি কি একসাথে একাধিক জনের সাথে কথা বলো?", a: ["হ্যাঁ", "না", "কখনো", "জানি না"] },
-            { q: "কেউ যদি কনফিউজ করে রাখে?", a: ["ছেড়ে দিই", "কথা বলি", "অপেক্ষা করি", "ইগনোর করি"] },
-            { q: "“ঘোস্টিং” সম্পর্কে মত?", a: ["খারাপ", "ঠিক আছে", "পরিস্থিতি অনুযায়ী", "করি"] },
-            { q: "তুমি কি কখনো কাউকে ঘোস্ট করেছো?", a: ["হ্যাঁ", "না", "একবার", "মনে নেই"] },
-            { q: "সিচুয়েশনশিপে সবচেয়ে বড় সমস্যা কী?", a: ["অনিশ্চয়তা", "ইমোশন", "কমিউনিকেশন", "ট্রাস্ট"] },
-            { q: "তুমি কি ক্লোজার চাই?", a: ["হ্যাঁ", "না", "কখনো", "দরকার নেই"] },
-            { q: "ভালোবাসা প্রকাশ করো কীভাবে?", a: ["কথা দিয়ে", "কাজ দিয়ে", "গিফট দিয়ে", "সময় দিয়ে"] },
-            { q: "কেয়ার দেখানো কীভাবে?", a: ["খোঁজ নেওয়া", "সাহায্য করা", "সময় দেওয়া", "সব"] },
-            { q: "“আই লাভ ইউ” কতবার বলা উচিত?", a: ["প্রতিদিন", "মাঝে মাঝে", "কম", "দরকার নেই"] },
-            { q: "তোমার লাভ ল্যাঙ্গুয়েজ কী?", a: ["ওয়ার্ডস", "অ্যাকশন", "টাইম", "গিফট"] },
-            { q: "তুমি কি সহজে কেয়ার করো?", a: ["হ্যাঁ", "না", "নির্ভর করে", "জানি না"] },
-            { q: "তোমার কাছে কেয়ার মানে?", a: ["খেয়াল রাখা", "পাশে থাকা", "বুঝতে পারা", "সব"] },
-            { q: "তুমি কি ওভারকেয়ারিং?", a: ["হ্যাঁ", "না", "কখনো", "জানি না"] },
-            { q: "তোমার কাছে ভালোবাসা = ?", a: ["ট্রাস্ট", "রেসপেক্ট", "কেয়ার", "সব"] },
-            { q: "তুমি কি স্যাক্রিফাইস করতে পারো?", a: ["হ্যাঁ", "না", "সীমিত", "জানি না"] },
-            { q: "তোমার কাছে “এফোর্ট” কতটা গুরুত্বপূর্ণ?", a: ["খুব", "মাঝারি", "কম", "জরুরি না"] },
-            { q: "তুমি কি সহজে ট্রাস্ট করো?", a: ["হ্যাঁ", "না", "সময় লাগে", "নির্ভর করে"] },
-            { q: "জেলাসি কি নরমাল?", a: ["হ্যাঁ", "না", "একটু", "বেশি"] },
-            { q: "পার্টনার অন্য কারো সাথে কথা বললে?", a: ["ঠিক আছে", "সন্দেহ", "জেলাসি", "কথা বলি"] },
-            { q: "তুমি কি পজেসিভ?", a: ["হ্যাঁ", "না", "একটু", "জানি না"] },
-            { q: "ট্রাস্ট ব্রেক হলে?", a: ["শেষ", "ঠিক করি", "সময় দিই", "কনফিউজ"] },
-            { q: "তুমি কি ওভারথিংক করো?", a: ["হ্যাঁ", "না", "কখনো", "সবসময়"] },
-            { q: "ফাইট হলে কী করো?", a: ["কথা বলি", "চুপ থাকি", "রাগ করি", "এড়িয়ে যাই"] },
-            { q: "কে আগে সরি বলবে?", a: ["আমি", "ও", "যার ভুল", "কেউ না"] },
-            { q: "তুমি কি ইমোশনাল?", a: ["হ্যাঁ", "না", "মাঝামাঝি", "জানি না"] },
-            { q: "তুমি কি সহজে কাঁদো?", a: ["হ্যাঁ", "না", "কখনো", "লুকাই"] },
-            { q: "লং ডিস্ট্যান্স রিলেশন?", a: ["সম্ভব", "কঠিন", "না", "নির্ভর করে"] },
-            { q: "Daily কথা বলা জরুরি?", a: ["হ্যাঁ", "না", "মাঝেমাঝে", "মুড অনুযায়ী"] },
-            { q: "Space কতটা দরকার?", a: ["বেশি", "মাঝারি", "কম", "দরকার নেই"] },
-            { q: "সোশ্যাল মিডিয়া পোস্ট?", a: ["চাই", "না", "মাঝে মাঝে", "দরকার নেই"] },
-            { q: "পাসওয়ার্ড শেয়ার করা উচিত?", a: ["হ্যাঁ", "না", "ট্রাস্টে", "দরকার নেই"] },
-            { q: "বন্ধুদের সাথে সময় vs পার্টনার?", a: ["পার্টনার", "বন্ধু", "ব্যালান্স", "মুড"] },
-            { q: "তুমি কি প্ল্যানিং করো?", a: ["হ্যাঁ", "না", "কখনো", "ও করে"] },
-            { q: "সারপ্রাইজ পছন্দ?", a: ["হ্যাঁ", "না", "কখনো", "ছোট হলে"] },
-            { q: "তুমি কি ডমিনেন্ট না সাবমিসিভ?", a: ["ডমিনেন্ট", "সাবমিসিভ", "মিক্স", "জানি না"] },
-            { q: "রিলেশনশিপে সবচেয়ে জরুরি কী?", a: ["ট্রাস্ট", "কেয়ার", "কমিউনিকেশন", "সব"] },
-            { q: "ব্রেকআপের পর কী করো?", a: ["মুভ অন", "কাঁদি", "বন্ধুর সাথে থাকি", "একা থাকি"] },
-            { q: "এক্সের সাথে বন্ধু থাকা যায়?", a: ["হ্যাঁ", "না", "কখনো", "কঠিন"] },
-            { q: "তুমি কি দ্রুত মুভ অন করো?", a: ["হ্যাঁ", "না", "সময় লাগে", "নির্ভর করে"] },
-            { q: "ভালোবাসা একবারই হয়?", a: ["হ্যাঁ", "না", "জানি না", "অনেকবার"] },
-            { q: "তুমি কি সেকেন্ড চান্স দাও?", a: ["হ্যাঁ", "না", "পরিস্থিতি অনুযায়ী", "একবার"] },
-            { q: "রেড ফ্ল্যাগ দেখলে?", a: ["এড়িয়ে যাই", "কথা বলি", "ইগনোর করি", "থাকি"] },
-            { q: "গ্রীন ফ্ল্যাগ কী?", a: ["কেয়ার", "ট্রাস্ট", "রেসপেক্ট", "সব"] },
-            { q: "তুমি কি সিরিয়াস রিলেশন চাও?", a: ["হ্যাঁ", "না", "এখন না", "জানি না"] },
-            { q: "ভালোবাসা না ক্যারিয়ার আগে?", a: ["ভালোবাসা", "ক্যারিয়ার", "ব্যালান্স", "পরিস্থিতি"] },
-            { q: "তুমি কি নিজের জন্য ভালোবাসো?", a: ["হ্যাঁ", "না", "শিখছি", "জানি না"] },
-            { q: "তুমি কি সহজে প্রেমে পড়ে যাও?", a: ["হ্যাঁ", "না", "কখনো কখনো", "সময় লাগে"] },
-            { q: "কারো জন্য অপেক্ষা করতে পারো?", a: ["হ্যাঁ", "না", "নির্ভর করে", "কিছুদিন"] },
-            { q: "“সোলমেট” বিশ্বাস করো?", a: ["হ্যাঁ", "না", "হয়তো", "জানি না"] },
-            { q: "তুমি কি নিজের ফিলিংস লুকাও?", a: ["হ্যাঁ", "না", "কখনো", "বেশিরভাগ সময়"] },
-            { q: "ভালোবাসা বেশি কষ্ট দেয় না সুখ?", a: ["সুখ", "কষ্ট", "দুটোই", "জানি না"] },
-            { q: "তুমি কি গভীর কথা বলতে পছন্দ করো?", a: ["হ্যাঁ", "না", "মুড অনুযায়ী", "মাঝে মাঝে"] },
-            { q: "“মিস করা” কীভাবে বোঝাও?", a: ["মেসেজ করি", "কল করি", "চুপ থাকি", "স্ট্যাটাস দিই"] },
-            { q: "তুমি কি কাউকে খুব মিস করো?", a: ["হ্যাঁ", "না", "মাঝে মাঝে", "বলতে চাই না"] },
-            { q: "ভালোবাসা কি সময়ের সাথে কমে?", a: ["হ্যাঁ", "না", "নির্ভর করে", "বাড়ে"] },
-            { q: "তুমি কি লয়্যাল?", a: ["হ্যাঁ", "না", "চেষ্টা করি", "নির্ভর করে"] },
-            { q: "তুমি কি আগে মেসেজ দাও?", a: ["হ্যাঁ", "না", "মুড অনুযায়ী", "অপেক্ষা করি"] },
-            { q: "“লাস্ট সিন” দেখে রাগ হয়?", a: ["হ্যাঁ", "না", "কখনো", "বেশি"] },
-            { q: "রিপ্লাই দেরি হলে?", a: ["বুঝি", "রাগ করি", "ওভারথিংক", "ইগনোর"] },
-            { q: "কল না টেক্সট—কোনটা পছন্দ?", a: ["কল", "টেক্সট", "দুটোই", "মুড"] },
-            { q: "তুমি কি লম্বা কথা বলতে পারো?", a: ["হ্যাঁ", "না", "মাঝে মাঝে", "কার উপর নির্ভর"] },
-            { q: "“ড্রাই টেক্সট” পেলে?", a: ["ইগনোর", "প্রশ্ন করি", "রাগ করি", "একই করি"] },
-            { q: "Honest হওয়া কতটা জরুরি?", a: ["খুব", "মাঝারি", "কম", "দরকার নেই"] },
-            { q: "তুমি কি সব কথা শেয়ার করো?", a: ["হ্যাঁ", "না", "কিছু", "নির্ভর করে"] },
-            { q: "“Seen zone” করলে কী ভাবো?", a: ["ব্যস্ত", "ইগনোর", "রাগ", "কিছু না"] },
-            { q: "কথা না হলে কি দূরত্ব বাড়ে?", a: ["হ্যাঁ", "না", "কখনো", "নির্ভর করে"] },
-            { q: "তুমি কি সহজে অ্যাটাচড হয়ে যাও?", a: ["হ্যাঁ", "না", "সময় লাগে", "নির্ভর করে"] },
-            { q: "কারো সাথে অভ্যাস হয়ে গেলে?", a: ["ছাড়তে পারি না", "চেষ্টা করি", "কষ্ট হয়", "ইগনোর"] },
-            { q: "তুমি কি “good morning/night” আশা করো?", a: ["হ্যাঁ", "না", "মাঝে মাঝে", "দরকার নেই"] },
-            { q: "ডেইলি আপডেট দরকার?", a: ["হ্যাঁ", "না", "কিছুটা", "মুড"] },
-            { q: "তুমি কি clingy?", a: ["হ্যাঁ", "না", "একটু", "জানি না"] },
-            { q: "তুমি কি সহজে দূরে সরে যাও?", a: ["হ্যাঁ", "না", "কষ্টে", "নির্ভর করে"] },
-            { q: "তুমি কি over-attach হও?", a: ["হ্যাঁ", "না", "কখনো", "জানি না"] },
-            { q: "কারো অভ্যাস ভাঙা কতটা কঠিন?", a: ["খুব", "মাঝারি", "কম", "সহজ"] },
-            { q: "তুমি কি attention চাও?", a: ["হ্যাঁ", "না", "একটু", "মুড"] },
-            { q: "Ignored হলে কী করো?", a: ["দূরে যাই", "প্রশ্ন করি", "রাগ করি", "চুপ থাকি"] },
-            { q: "Future imagine করো কারো সাথে?", a: ["হ্যাঁ", "না", "কখনো", "ভয় লাগে"] },
-            { q: "বিয়ে নিয়ে ভাবো?", a: ["হ্যাঁ", "না", "পরে", "জানি না"] },
-            { q: "City change করবে?", a: ["হ্যাঁ", "না", "নির্ভর করে", "কঠিন"] },
-            { q: "Family approval কতটা জরুরি?", a: ["খুব", "মাঝারি", "কম", "দরকার নেই"] },
-            { q: "Long-term না short-term?", a: ["long-term", "short-term", "দেখি", "জানি না"] },
-            { q: "Realistic না dreamy?", a: ["realistic", "dreamy", "mix", "জানি না"] },
-            { q: "Heartbreak এর ভয় আছে?", a: ["হ্যাঁ", "না", "একটু", "লুকাই"] },
-            { q: "আবার ভালোবাসতে পারবে?", a: ["হ্যাঁ", "না", "সময় লাগবে", "জানি না"] },
-            { q: "“Right person wrong time” বিশ্বাস করো?", a: ["হ্যাঁ", "না", "কখনো", "জানি না"] },
-            { q: "শেষ প্রশ্ন — ভালোবাসা তোমার কাছে কী?", a: ["শান্তি", "অনুভূতি", "দায়িত্ব", "সবকিছু 💖"] }
-        ];
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr id="weekHeaderRow"></tr>
+                <tr id="dayNameRow"></tr>
+                <tr id="dateNumberRow"></tr>
+            </thead>
+            <tbody id="habitBody"></tbody>
+        </table>
+    </div>
 
-        const tipsBank = [
-            "ভালোবাসার আগে নিজেকে ভালোবাসতে শিখো।", "সবসময় নিজের সম্মান (self-respect) ধরে রাখো।", "কাউকে বদলানোর চেষ্টা না করে accept করো।", "Toxic behaviour চিনতে শিখো।", "সন্দেহ বেশি হলে সম্পর্ক ভেঙে যায়।", "ভুল থেকে শিখো, বারবার repeat কোরো না।", "Commitment-এর আগে মানুষটাকে বুঝো।", "যে তোমাকে শান্তি দেয়, তাকেই বেছে নাও।"
-        ];
+    <div class="backup-controls">
+        <button class="btn-easy" onclick="copyDataToClipboard()">💾 Export Data</button>
+        <button class="btn-easy" onclick="pasteDataToRestore()">📂 Import Data</button>
+    </div>
 
-        const ratingsData = {
-            1: ["একদমই সন্তুষ্ট না।", "পুরো অভিজ্ঞতা খারাপ ছিল।"],
-            2: ["Expectation meet করতে পারেনি।", "উন্নতি দরকার।"],
-            3: ["মোটামুটি ভালো।", "ঠিকঠাক ছিল।"],
-            4: ["বেশ ভালো লেগেছে।", "সন্তুষ্ট।"],
-            5: ["একদম Perfect!", "অসাধারণ অনুভূতি ❤️"]
-        };
+    <div class="developed-by">
+        Developed by Pritam
+    </div>
+</div>
 
-        // --- History Logic Starts ---
-        window.addEventListener('load', displayHistory);
+<script>
+    let currentMonth = "";
+    const monthsArr = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    const dayNames = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+    let allData = JSON.parse(localStorage.getItem('HabitPro_Pritam_Final')) || {};
+    let myChart;
 
-        function saveToHistory(names, score) {
-            let history = JSON.parse(localStorage.getItem('loveHistory')) || [];
-            const newEntry = {
-                names: names,
-                score: score,
-                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-            };
-            history.unshift(newEntry);
-            if(history.length > 5) history.pop();
-            localStorage.setItem('loveHistory', JSON.stringify(history));
-            displayHistory();
-        }
+    function init() {
+        const d = new Date();
+        currentMonth = monthsArr[d.getMonth()];
+        document.getElementById('monthSelect').value = currentMonth;
+        document.getElementById('fullDateDisplay').innerText = `${d.toDateString()}`;
+        initChart();
+        updateUI();
+    }
 
-        function displayHistory() {
-            const historyList = document.getElementById('history-list');
-            const container = document.getElementById('history-container');
-            let history = JSON.parse(localStorage.getItem('loveHistory')) || [];
-
-            if(history.length > 0) {
-                container.style.display = 'block';
-                historyList.innerHTML = history.map(item => `
-                    <div class="history-item">
-                        <span><strong>${item.names}</strong></span>
-                        <span style="color:#ff4d6d; font-weight:bold;">${item.score}% <small style="color:#888; font-weight:normal;">(${item.time})</small></span>
-                    </div>
-                `).join('');
-            } else {
-                container.style.display = 'none';
-            }
-        }
-
-        function clearHistory() {
-            if(confirm("সব হিস্ট্রি কি মুছে ফেলতে চাও?")) {
-                localStorage.removeItem('loveHistory');
-                displayHistory();
-            }
-        }
-        // --- History Logic Ends ---
-
-        function toggleMode(mode) {
-            document.getElementById('calc-section').style.display = mode === 'calc' ? 'block' : 'none';
-            document.getElementById('quiz-section').style.display = mode === 'quiz' ? 'block' : 'none';
-            if(mode === 'quiz') startQuiz();
-        }
-
-        function startQuiz() {
-            selectedQuestions = [...questionBank].sort(() => Math.random() - 0.5).slice(0, 15);
-            qIndex = 0; quizScore = 0;
-            showQuestion();
-        }
-
-        function showQuestion() {
-            if(qIndex >= 15) { 
-                let calculatedScore = Math.floor(Math.random() * 41 + 59);
-                showResult(calculatedScore, "Quiz Result"); 
-                return; 
-            }
-            const q = selectedQuestions[qIndex];
-            document.getElementById('q-text').innerText = q.q;
-            document.getElementById('q-progress').innerText = `Question ${qIndex + 1} of 15`;
-            const area = document.getElementById('options-area'); area.innerHTML = '';
-            q.a.forEach((opt, i) => {
-                const btn = document.createElement('button'); btn.className = 'option-btn'; btn.innerText = opt;
-                btn.onclick = () => { quizScore += (5 - i); qIndex++; showQuestion(); };
-                area.appendChild(btn);
-            });
-        }
-
-        function startAnalysis() {
-            const n1 = document.getElementById('name1').value;
-            const n2 = document.getElementById('name2').value;
-            if(!n1 || !n2) return alert("দয়া করে নাম পূরণ করুন!");
-            document.getElementById('display-names').innerText = n1 + " ❤️ " + n2;
-            audio.play().catch(()=>{});
-            showResult(Math.floor(Math.random() * 41 + 59), "Calculation Result");
-        }
-
-        function showResult(score, type) {
-            document.getElementById('calc-section').style.display = 'none';
-            document.getElementById('quiz-section').style.display = 'none';
-            document.getElementById('result-box').style.display = 'block';
-            document.getElementById('tips-area').innerText = tipsBank[Math.floor(Math.random() * tipsBank.length)];
-
-            let cur = 0;
-            const t = setInterval(() => {
-                if(cur >= score) { 
-                    clearInterval(t); 
-                    
-                    // Save to history once result is ready
-                    let nameText = (type === "Quiz Result") ? "Love Quiz" : document.getElementById('name1').value + " + " + document.getElementById('name2').value;
-                    saveToHistory(nameText, score);
-
-                    document.getElementById('final-msg').innerText = score > 85 ? "Soulmate Alert! ❤️" : "Great Bond! ✨";
-                    if(score > 85) confetti();
-                    setTimeout(() => { document.getElementById('rating-modal').style.display = 'flex'; }, 5000);
-                } else {
-                    cur++;
-                    document.getElementById('score-val').innerText = cur + "%";
-                    document.getElementById('meter-fill').style.transform = `translateX(-50%) rotate(${cur * 1.8}deg)`;
+    function initChart() {
+        const ctx = document.getElementById('habitChart').getContext('2d');
+        myChart = new Chart(ctx, {
+            type: 'bar',
+            data: { labels: [], datasets: [{ data: [], backgroundColor: '#D1C4E9', borderRadius: 10 }] },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { 
+                    y: { display: false },
+                    x: { grid: { display: false }, ticks: { font: { size: 9 }, color: '#BDC3C7' } }
                 }
-            }, 30);
-        }
+            }
+        });
+    }
 
-        function saveToGallery() {
-            const node = document.getElementById('capture-node');
-            const actionBtns = document.getElementById('action-btns');
-            actionBtns.style.display = 'none'; 
+    function calculateStreak(days) {
+        let streak = 0;
+        const todayIdx = new Date().getDate() - 1;
+        for (let i = todayIdx; i >= 0; i--) {
+            if (days[i]) streak++;
+            else if (i < todayIdx) break;
+        }
+        return streak;
+    }
+
+    function renderTable() {
+        const body = document.getElementById('habitBody');
+        body.innerHTML = '';
+        const habits = allData[currentMonth] || [];
+        const totalDays = getDaysInMonth();
+        const today = new Date().getDate();
+        const isCurrentMonth = (new Date().getMonth() === monthsArr.indexOf(currentMonth));
+
+        habits.forEach((h, hIdx) => {
+            const streak = calculateStreak(h.days);
+            const colorClass = `habit-row-${hIdx % 5}`; // Cycle through the 5 colors
             
-            html2canvas(node, { scale: 2 }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'Love_Result_Pritam.png';
-                link.href = canvas.toDataURL();
-                link.click();
-                actionBtns.style.display = 'block';
-            });
-        }
+            let row = `<tr class="${colorClass}"><td class="habit-name-cell">
+                        ${h.name} 
+                        ${streak > 1 ? `<span class="streak-badge">🔥 ${streak}</span>` : ''}
+                        <button class="delete-btn" onclick="deleteHabit(${hIdx})">×</button>
+                      </td>`;
+            
+            for(let d=0; d<totalDays; d++) {
+                const isToday = (isCurrentMonth && (d+1) === today) ? 'today-col' : '';
+                const isChecked = h.days[d] ? 'checked' : '';
+                row += `<td class="day-cell ${isToday} ${isChecked}">
+                            <input type="checkbox" ${h.days[d]?'checked':''} onclick="toggleDay(${hIdx},${d})">
+                        </td>`;
+            }
+            body.innerHTML += row + `</tr>`;
+        });
+    }
 
-        function setRating(n) {
-            const stars = document.getElementById('star-container').children;
-            for(let i=0; i<5; i++) stars[i].classList.toggle('active', i < n);
-            const msgs = ratingsData[n];
-            document.getElementById('rating-msg').innerText = msgs[Math.floor(Math.random() * msgs.length)];
-            if(n === 5) confetti();
-        }
+    function getDaysInMonth() { return new Date(2026, monthsArr.indexOf(currentMonth) + 1, 0).getDate(); }
+    
+    function updateUI() { 
+        localStorage.setItem('HabitPro_Pritam_Final', JSON.stringify(allData)); 
+        renderHeader(); 
+        renderTable(); 
+        calculateStats(); 
+    }
 
-        function closeRating() { document.getElementById('rating-modal').style.display = 'none'; }
-    </script>
+    function renderHeader() {
+        const totalDays = getDaysInMonth(); const mIdx = monthsArr.indexOf(currentMonth);
+        let wk = `<th class="habit-name-cell" rowspan="3" style="background:white; color:#95A5A6; border-left:none;">HABITS</th>`, dy = '', dt = '';
+        for (let d = 1; d <= totalDays; d++) {
+            if ((d-1) % 7 === 0) wk += `<th colspan="${Math.min(7, totalDays-d+1)}" class="week-header">Week ${Math.floor((d-1)/7)+1}</th>`;
+            const dateObj = new Date(2026, mIdx, d);
+            dy += `<th class="day-label">${dayNames[dateObj.getDay()]}</th>`;
+            dt += `<th class="date-label">${d}</th>`;
+        }
+        document.getElementById('weekHeaderRow').innerHTML = wk; document.getElementById('dayNameRow').innerHTML = dy; document.getElementById('dateNumberRow').innerHTML = dt;
+    }
+
+    function calculateStats() {
+        const habits = allData[currentMonth] || []; const totalDays = getDaysInMonth();
+        const todayIdx = new Date().getDate() - 1;
+        const isCurrentMonth = (new Date().getMonth() === monthsArr.indexOf(currentMonth));
+        let labels = [], scores = [], todayP = 0;
+        for (let d = 0; d < totalDays; d++) {
+            labels.push(d + 1); let done = 0;
+            habits.forEach(h => { if(h.days[d]) done++; });
+            let p = habits.length ? Math.round((done/habits.length)*100) : 0;
+            scores.push(p); if(isCurrentMonth && d === todayIdx) todayP = p;
+        }
+        document.getElementById('todayPercent').innerText = todayP + "%";
+        myChart.data.labels = labels; myChart.data.datasets[0].data = scores; myChart.update();
+    }
+
+    function addHabit() {
+        const val = document.getElementById('habitInput').value.trim(); if(!val) return;
+        if(!allData[currentMonth]) allData[currentMonth] = [];
+        allData[currentMonth].push({ name: val, days: new Array(getDaysInMonth()).fill(false) });
+        document.getElementById('habitInput').value = ''; updateUI();
+    }
+
+    function toggleDay(hIdx, dIdx) {
+        allData[currentMonth][hIdx].days[dIdx] = !allData[currentMonth][hIdx].days[dIdx];
+        if(allData[currentMonth][hIdx].days[dIdx]) confetti({ particleCount: 30, spread: 40, origin: { y: 0.8 } });
+        updateUI();
+    }
+
+    function deleteHabit(idx) { if(confirm("Delete this habit?")) { allData[currentMonth].splice(idx, 1); updateUI(); } }
+    function changeMonth() { currentMonth = document.getElementById('monthSelect').value; updateUI(); }
+
+    function copyDataToClipboard() {
+        const dataStr = JSON.stringify(allData);
+        const el = document.createElement('textarea');
+        el.value = dataStr;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        alert("✅ Data Copied!");
+    }
+
+    function pasteDataToRestore() {
+        const userInput = prompt("Paste code here:");
+        if (userInput) {
+            try {
+                allData = JSON.parse(userInput);
+                updateUI();
+                alert("🔥 Success!");
+            } catch (e) { alert("❌ Error!"); }
+        }
+    }
+
+    window.onload = init;
+</script>
 </body>
 </html>
