@@ -205,6 +205,7 @@
 
         .backup-controls { display: flex; justify-content: center; gap: 15px; margin: 20px 0; }
         .btn-pill { padding: 12px 20px; border-radius: 15px; border: 1px solid #EEE; cursor: pointer; background: #FFF; color: #555; font-weight: 600; }
+        .sync-btn { border: 1px solid var(--primary); color: var(--primary); }
         .delete-btn { color: #BBB; border: none; background: none; float: right; cursor: pointer; font-weight: bold; margin-left: 10px; font-size: 18px; transition: color 0.3s; }
         .delete-btn:hover { color: var(--danger); }
         
@@ -320,6 +321,7 @@
     </div>
 
     <div class="backup-controls animate-in delay-5">
+        <button class="btn-pill sync-btn" onclick="syncToServer()">☁️ Sync to Cloud</button>
         <button class="btn-pill" onclick="openExportModal()">💾 Export Data</button>
         <button class="btn-pill" onclick="openRestoreModal()">📂 Restore Data</button>
     </div>
@@ -383,6 +385,39 @@
     let habitToEditIdx = null;
     let habitToDeleteIdx = null;
 
+    // --- PYTHON BACKEND SYNC FUNCTIONS ---
+    async function syncToServer() {
+        const payload = { habits: allData, notes: notesData };
+        try {
+            const response = await fetch('http://127.0.0.1:5000/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            showToast(result.message);
+        } catch (error) {
+            console.error("Connection Error:", error);
+            showToast("Server is offline!", "error");
+        }
+    }
+
+    async function loadFromServer() {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/load');
+            const data = await response.json();
+            if (data.habits && Object.keys(data.habits).length > 0) {
+                allData = data.habits;
+                notesData = data.notes || {};
+                updateUI();
+                showToast("Data loaded from server");
+            }
+        } catch (error) {
+            console.log("Using local data as server is not responding.");
+        }
+    }
+    // ------------------------------------
+
     function showToast(message, type = 'success') {
         const container = document.getElementById('toastContainer');
         const toast = document.createElement('div');
@@ -405,6 +440,7 @@
             setTimeout(() => loader.style.visibility = 'hidden', 800);
         }, 1500);
         init();
+        loadFromServer(); // Load from Python on startup
     };
 
     function init() {
@@ -424,13 +460,7 @@
             options: { 
                 responsive: true, 
                 maintainAspectRatio: false, 
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 100,
-                        ticks: { stepSize: 20 }
-                    }
-                },
+                scales: { y: { beginAtZero: true, max: 100, ticks: { stepSize: 20 } } },
                 plugins: { legend: { display: false } } 
             }
         });
@@ -440,7 +470,11 @@
         localStorage.setItem('HabitPro_Pritam_Final', JSON.stringify(allData)); 
         localStorage.setItem('HabitPro_Notes_Pritam', JSON.stringify(notesData));
         renderHeader(); renderTable(); calculateStats(); renderTimeline();
+        // Trigger auto-sync to python whenever UI updates
+        syncToServer();
     }
+
+    // ... Rest of your helper functions (calculateStreak, renderTable, etc.) remain identical ...
 
     function calculateStreak(days) {
         let streak = 0;
