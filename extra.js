@@ -1,43 +1,61 @@
-// extra.js - Clean Interaction Logic
+// Weather Controller Logic - extra.js
 
 window.addEventListener('load', () => {
-    // 1. Add a Slim Progress Bar at the very top
-    const progressBar = document.createElement('div');
-    progressBar.style = `
+    // ১. একটি কন্ট্রোল প্যানেল তৈরি করা
+    const weatherControl = document.createElement('div');
+    weatherControl.style = `
         position: fixed;
-        top: 0;
-        left: 0;
-        height: 4px;
-        width: 0%;
-        background: #3b82f6;
+        bottom: 100px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
         z-index: 10000;
-        transition: width 0.4s ease;
+        background: rgba(255,255,255,0.8);
+        padding: 10px;
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        backdrop-filter: blur(5px);
     `;
-    document.body.appendChild(progressBar);
 
-    // 2. Update Progress Bar based on Score
-    const updateTopBar = () => {
-        const scoreText = document.getElementById('scoreText').innerText;
-        progressBar.style.width = scoreText; // Matches the % score
-    };
+    // ২. ওয়েদার অপশনগুলো (Emoji, Type)
+    const modes = [
+        { icon: '☀️', type: 'sunny' },
+        { icon: '🌧️', type: 'rainy' },
+        { icon: '❄️', type: 'snowy' },
+        { icon: '⛈️', type: 'stormy' },
+        { icon: '🌙', type: 'night' },
+        { icon: '☁️', type: 'cloudy' }
+    ];
 
-    // Observe changes in the score text
-    const observer = new MutationObserver(updateTopBar);
-    observer.observe(document.getElementById('scoreText'), { childList: true });
+    modes.forEach(mode => {
+        const btn = document.createElement('button');
+        btn.innerHTML = mode.icon;
+        btn.style = `
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            font-size: 20px;
+            transition: 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        `;
+        
+        btn.onclick = () => {
+            // মেইন কোডের applyWeatherTheme ফাংশনটি কল করা
+            if (typeof applyWeatherTheme === 'function') {
+                applyWeatherTheme(mode.type);
+                showToast(`Weather changed to ${mode.type.toUpperCase()}! ✨`);
+            }
+        };
 
-    // 3. Smooth Entry Animation for Task Items
-    const originalRenderTasks = window.renderTasks;
-    window.renderTasks = function(tasks) {
-        originalRenderTasks(tasks);
-        const items = document.querySelectorAll('.task-item');
-        items.forEach((item, index) => {
-            item.style.opacity = '0';
-            item.style.transform = 'translateY(10px)';
-            setTimeout(() => {
-                item.style.transition = 'all 0.4s ease';
-                item.style.opacity = '1';
-                item.style.transform = 'translateY(0)';
-            }, index * 50);
-        });
-    };
+        btn.onmouseover = () => btn.style.transform = 'scale(1.2)';
+        btn.onmouseout = () => btn.style.transform = 'scale(1)';
+        
+        weatherControl.appendChild(btn);
+    });
+
+    document.body.appendChild(weatherControl);
 });
