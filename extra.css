@@ -1,0 +1,75 @@
+/* Dragon Ball Z Premium Theme for extra.css */
+
+:root {
+  /* Iconic DBZ Colors */
+  --dbz-orange: #ff8a00 !important;
+  --dbz-blue: #004d99 !important;
+  --dbz-yellow: #fdfc47 !important;
+  --dbz-dark: #1a1a1a !important;
+  
+  /* Overriding App Variables */
+  --bg: #121212 !important;
+  --text: #ffffff !important;
+  --sage: var(--dbz-orange) !important;
+  --lavender: var(--dbz-blue) !important;
+  --header-grad: linear-gradient(135deg, #ff8a00, #e52d27) !important;
+}
+
+/* 1. Body Background with a Subtle Saiyan Aura */
+body {
+  background-color: var(--dbz-dark) !important;
+  background-image: radial-gradient(circle at 50% 50%, rgba(255, 138, 0, 0.1) 0%, transparent 80%) !important;
+}
+
+/* 2. Header Style - Goku's Gi Colors */
+.header {
+  border-bottom: 4px solid var(--dbz-blue) !important;
+  box-shadow: 0 4px 15px rgba(255, 138, 0, 0.4) !important;
+}
+
+/* 3. Task Cards - Glowing Aura Effect */
+.task-item {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 138, 0, 0.3) !important;
+  border-radius: 12px !important;
+  transition: all 0.3s ease !important;
+}
+
+.task-item:hover {
+  transform: scale(1.02) !important;
+  border-color: var(--dbz-yellow) !important;
+  box-shadow: 0 0 15px rgba(253, 252, 71, 0.4) !important;
+}
+
+/* 4. Dragon Ball Style Buttons */
+.add-btn, .pom-btn.start {
+  background: linear-gradient(135deg, #ff8a00, #f7931e) !important;
+  color: white !important;
+  text-transform: uppercase !important;
+  font-weight: 900 !important;
+  letter-spacing: 1px !important;
+  border: 2px solid #fff !important;
+}
+
+/* 5. Score Ring - Super Saiyan Yellow */
+.ring-fg {
+  stroke: var(--dbz-yellow) !important;
+  filter: drop-shadow(0 0 5px var(--dbz-yellow)) !important;
+}
+
+/* 6. Custom Category Tags */
+.cat-tag.work { background: #004d99 !important; color: white !important; }
+.cat-tag.health { background: #ff8a00 !important; color: white !important; }
+.cat-tag.study { background: #2ecc71 !important; color: white !important; }
+
+/* 7. Pomodoro Timer Glow */
+.pom-time {
+  color: var(--dbz-yellow) !important;
+  text-shadow: 0 0 10px rgba(253, 252, 71, 0.8) !important;
+}
+
+/* 8. Heatmap Cells */
+.heatmap-cell.h1 { background: #553300 !important; }
+.heatmap-cell.h2 { background: #885500 !important; }
+.heatmap-cell.h3 { background: #bb7700 !important; }
+.heatmap-cell.h4 { background: #ff8a00 !important; }
