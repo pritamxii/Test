@@ -1,57 +1,43 @@
-// extra.js - The "Super Saiyan" Logic Controller
+// extra.js - Clean Interaction Logic
 
 window.addEventListener('load', () => {
-    console.log("Extra JS: Power Level is over 9000!");
+    // 1. Add a Slim Progress Bar at the very top
+    const progressBar = document.createElement('div');
+    progressBar.style = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 4px;
+        width: 0%;
+        background: #3b82f6;
+        z-index: 10000;
+        transition: width 0.4s ease;
+    `;
+    document.body.appendChild(progressBar);
 
-    // 1. Create a "Power Level" display in the Header
-    const headerTitle = document.querySelector('.header-left');
-    if (headerTitle) {
-        const powerLevel = document.createElement('div');
-        powerLevel.id = 'power-level-display';
-        powerLevel.style = "color: #fdfc47; font-weight: 900; font-size: 14px; text-shadow: 0 0 5px orange;";
-        powerLevel.innerHTML = "POWER LEVEL: <span id='pl-value'>9000</span>";
-        headerTitle.appendChild(powerLevel);
-    }
-
-    // 2. Hijack the toggleTask function for Sound and Visuals
-    const originalToggle = window.toggleTask;
-    window.toggleTask = function(i) {
-        // Run the original logic first
-        originalToggle(i);
-
-        // Update Power Level based on score
-        const currentScore = parseInt(document.getElementById('scoreText').innerText) || 0;
-        const newPL = 9000 + (currentScore * 100);
-        document.getElementById('pl-value').innerText = newPL;
-
-        // Play a "Power Up" sound effect (Using a public short spark sound)
-        let audio = new Audio('https://www.soundjay.com/buttons/sounds/button-09.mp3');
-        audio.volume = 0.5;
-        audio.play();
-
-        // Show a "KAMEHAMEHA" toast if score is high
-        if (currentScore > 80) {
-            showToast("✨ SUPER SAIYAN MODE UNLOCKED!");
-        }
+    // 2. Update Progress Bar based on Score
+    const updateTopBar = () => {
+        const scoreText = document.getElementById('scoreText').innerText;
+        progressBar.style.width = scoreText; // Matches the % score
     };
 
-    // 3. Hijack the delTask function for a Screen Shake effect
-    const originalDelete = window.delTask;
-    window.delTask = function(i) {
-        // Screen Shake Effect
-        const app = document.getElementById('app');
-        app.style.transition = "transform 0.1s";
-        app.style.transform = "translateX(10px)";
-        
-        setTimeout(() => app.style.transform = "translateX(-10px)", 50);
-        setTimeout(() => app.style.transform = "translateX(5px)", 100);
-        setTimeout(() => app.style.transform = "translateX(0)", 150);
+    // Observe changes in the score text
+    const observer = new MutationObserver(updateTopBar);
+    observer.observe(document.getElementById('scoreText'), { childList: true });
 
-        // Run the actual delete
-        originalDelete(i);
-        showToast("💥 ENEMY DEFEATED!");
+    // 3. Smooth Entry Animation for Task Items
+    const originalRenderTasks = window.renderTasks;
+    window.renderTasks = function(tasks) {
+        originalRenderTasks(tasks);
+        const items = document.querySelectorAll('.task-item');
+        items.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(10px)';
+            setTimeout(() => {
+                item.style.transition = 'all 0.4s ease';
+                item.style.opacity = '1';
+                item.style.transform = 'translateY(0)';
+            }, index * 50);
+        });
     };
-
-    // 4. Add a cool console log for debugging
-    console.log("%c DRAGON BALL Z SYSTEM ACTIVE ", "background: #ff8a00; color: #fff; font-weight: bold; padding: 5px;");
 });
