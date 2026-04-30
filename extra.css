@@ -1,7 +1,50 @@
-/* Glass Card Effect */
-.glass-card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
+:root {
+    --sky-light: #e0f2fe; /* Soft Sky Blue */
+    --white-pure: #ffffff;
+    --sky-mist: #f0f9ff;  /* Lightest Blue */
+    --transition-speed: 15s;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    
+    /* Dynamic Animated Gradient */
+    background: linear-gradient(-45deg, var(--sky-light), var(--white-pure), var(--sky-mist), var(--white-pure));
+    background-size: 400% 400%;
+    animation: gradientBG var(--transition-speed) ease infinite;
+    
+    display: flex;
+    flex-direction: column;
+    color: #334155; /* Soft Slate for text */
+}
+
+/* Background Animation Keyframes */
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Glassmorphism Effect for your Cards */
+.container, .card, .task-box {
+    background: rgba(255, 255, 255, 0.4) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
 }
